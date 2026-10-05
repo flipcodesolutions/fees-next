@@ -718,7 +718,7 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
                   </thead>
                   <tbody>
                     {selectedCourses.length === 0 ? (
-                      <tr><td colSpan={6}>No course selected.</td></tr>
+                      <tr><td colSpan={6}>No course selected123.</td></tr>
                     ) : (
                       selectedCourses.map((c, idx) => (
                         <tr key={`${c.courseId ?? c.courseName}-${idx}`}>
