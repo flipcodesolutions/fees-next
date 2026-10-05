@@ -2,7 +2,7 @@ import { Search, Download, Calendar, CheckCircle2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { api, type FeeSummary, type FeePayment } from '../services/api';
 import Pagination from '../components/Pagination';
-import { formatDate } from '../services/utils';
+import { formatDate, formatCsvDate } from '../services/utils';
 
 
 export default function FeesReportScreen() {
@@ -121,11 +121,11 @@ export default function FeesReportScreen() {
         lines.push(`"${d.student_name}","${d.mobile}","${d.courseNames}","${d.startDates}","${d.total_amount}","${d.paid_amount}","${d.remaining_amount}","-","0",""`);
       } else {
         d.paymentsInRange.forEach((p: any, index: number) => {
-          const pDate = p.payment_date ? formatDate(p.payment_date) : formatDate(p.created_at);
+          const pDate = formatCsvDate(p.payment_date || p.created_at);
           const rowPrefix = index === 0
             ? `"${d.student_name}","${d.mobile}","${d.courseNames}","${d.startDates}","${d.total_amount}","${d.paid_amount}","${d.remaining_amount}"`
             : '"","","","","","",""';
-          lines.push(`${rowPrefix},"${pDate}","${p.amount}","${(p.remark || '').replace(/"/g, '""')}"`);
+          lines.push(`${rowPrefix},${pDate},"${p.amount}","${(p.remark || '').replace(/"/g, '""')}"`);
         });
       }
     });

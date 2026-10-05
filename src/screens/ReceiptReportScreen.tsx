@@ -2,7 +2,7 @@ import { Search, Download, Calendar, RotateCcw, AlertCircle, CheckCircle2 } from
 import { useEffect, useMemo, useState } from 'react';
 import { api, type FeePayment } from '../services/api';
 import Pagination from '../components/Pagination';
-import { formatDate } from '../services/utils';
+import { formatDate, formatCsvDate } from '../services/utils';
 
 export default function ReceiptReportScreen() {
   const [payments, setPayments] = useState<FeePayment[]>([]);
@@ -31,40 +31,29 @@ export default function ReceiptReportScreen() {
       const feesMap = new Map<number, any>();
       activeFees.forEach((f: any) => feesMap.set(f.admission_id, f));
 
-      // 1. Add all individual payment entries in exact entry order (no grouping by student name!)
+      // Only add individual payment entries with actual payments (amount > 0)
       paymentsList.forEach((p: any) => {
+        const feeAmount = Number(p.amount || 0);
+        if (feeAmount <= 0) return; // Ignore 0 or empty payment entries
+
         const fee = feesMap.get(p.admission_id);
+        // Exclude if associated student/fee is deleted
+        if (feesList.some((f: any) => f.admission_id === p.admission_id && f.status === 'Deleted')) {
+          return;
+        }
+
         combined.push({
           id: p.id,
           admission_id: p.admission_id,
           student_name: (fee && fee.student_name) || p.student_name,
           mobile: (fee && fee.mobile) || p.mobile,
-          amount: p.amount,
+          amount: feeAmount,
           payment_date: p.payment_date || p.created_at,
           next_payment_date: p.next_payment_date || (fee && fee.next_payment_date),
           remark: p.remark || '-',
           created_at: p.created_at || p.payment_date,
           numeric_id: typeof p.id === 'number' ? p.id : Number(p.id) || 0
         });
-      });
-
-      // 2. Add any student in Fees Management who has 0 payments yet (pending fees)
-      const paidAdmissionIds = new Set(paymentsList.map((p: any) => p.admission_id));
-      activeFees.forEach((fee: any) => {
-        if (!paidAdmissionIds.has(fee.admission_id)) {
-          combined.push({
-            id: `fee-${fee.id || fee.admission_id}`,
-            admission_id: fee.admission_id,
-            student_name: fee.student_name,
-            mobile: fee.mobile,
-            amount: 0,
-            payment_date: null,
-            next_payment_date: fee.next_payment_date,
-            remark: fee.status || 'Pending',
-            created_at: fee.updated_at || fee.created_at || '',
-            numeric_id: -1 // Placed after all real payments
-          });
-        }
       });
 
       setPayments(combined);
@@ -154,9 +143,9 @@ export default function ReceiptReportScreen() {
     const rows = sortedAsc.map((item, index) => {
       const no = index + 1;
       const studentName = `"${(item.student_name || '').replace(/"/g, '""')}"`;
-      const paymentDate = `"${formatDate(item.payment_date || item.created_at)}"`;
+      const paymentDate = formatCsvDate(item.payment_date || item.created_at);
       const amount = Number(item.amount || 0).toFixed(2);
-      const nextPaymentDate = `"${formatDate(item.next_payment_date)}"`;
+      const nextPaymentDate = formatCsvDate(item.next_payment_date);
       const remark = `"${(item.remark || '').replace(/"/g, '""')}"`;
 
       return [no, studentName, paymentDate, amount, nextPaymentDate, remark].join(',');

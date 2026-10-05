@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { api, type FeeSummary, type FeePayment } from '../services/api';
 import Pagination from '../components/Pagination';
 import { generateReceiptHtml } from '../components/FeeReceiptTemplate';
-import { formatDate } from '../services/utils';
+import { formatDate, formatCsvDate } from '../services/utils';
 
 const normalizeFeeStatus = (fee: FeeSummary): FeeSummary => {
   if (fee.status === 'Deleted') return fee;
@@ -15,6 +15,19 @@ const normalizeFeeStatus = (fee: FeeSummary): FeeSummary => {
     return { ...fee, status: 'Half Complete' };
   }
   return { ...fee, status: 'Pending' };
+};
+
+const getCourseNames = (payloadJson?: string): string => {
+  if (!payloadJson) return '';
+  try {
+    const parsed = JSON.parse(payloadJson);
+    if (parsed && Array.isArray(parsed.courses)) {
+      return parsed.courses.map((c: any) => c.courseName || '').filter(Boolean).join(', ');
+    }
+  } catch {
+    return '';
+  }
+  return '';
 };
 
 export default function FeesScreen() {
@@ -76,9 +89,10 @@ export default function FeesScreen() {
     const needle = query.trim().toLowerCase();
 
     if (needle) {
-      result = result.filter((f) =>
-        [f.student_name, f.mobile].some(v => String(v ?? '').toLowerCase().includes(needle))
-      );
+      result = result.filter((f) => {
+        const courseNames = getCourseNames(f.payload_json);
+        return [f.student_name, f.mobile, courseNames].some(v => String(v ?? '').toLowerCase().includes(needle));
+      });
     }
 
     if (statusFilter) {
@@ -174,16 +188,16 @@ export default function FeesScreen() {
         } else {
           // Student with payments
           filteredPayments.forEach((p: any, idx: number) => {
-            const payDate = p.created_at ? formatDate(p.created_at) : '-';
+            const payDate = formatCsvDate(p.created_at);
             const payAmount = p.amount ?? 0;
             const payRemark = (p.remark ?? '').replace(/"/g, '""');
 
             if (idx === 0) {
               // First row includes student details
-              rows.push(`"${studentNameEscaped}","${mobileEscaped}","${courseNameEscaped}","${courseStartDateEscaped}","${totalFees}","${overallPaid}","${overallRemaining}","${payDate}","${payAmount}","${payRemark}"`);
+              rows.push(`"${studentNameEscaped}","${mobileEscaped}","${courseNameEscaped}","${courseStartDateEscaped}","${totalFees}","${overallPaid}","${overallRemaining}",${payDate},"${payAmount}","${payRemark}"`);
             } else {
               // Subsequent rows leave student details blank
-              rows.push(`"","","","","","","","${payDate}","${payAmount}","${payRemark}"`);
+              rows.push(`"","","","","","","",${payDate},"${payAmount}","${payRemark}"`);
             }
           });
         }
@@ -583,7 +597,14 @@ export default function FeesScreen() {
                 filteredFees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((f, index) => (
                   <tr key={f.id}>
                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                    <td>{f.student_name}</td>
+                    <td>
+                      <div style={{ fontWeight: 600 }}>{f.student_name}</div>
+                      {getCourseNames(f.payload_json) && (
+                        <div style={{ fontSize: 11, color: 'var(--outline)', marginTop: 2, fontWeight: 500 }}>
+                          {getCourseNames(f.payload_json)}
+                        </div>
+                      )}
+                    </td>
                     <td>{f.mobile}</td>
                     <td>₹{f.total_amount?.toFixed(2)}</td>
                     <td style={{ color: 'var(--success)', fontWeight: 600 }}>₹{f.paid_amount?.toFixed(2)}</td>
