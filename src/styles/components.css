@@ -197,7 +197,7 @@
 
 .sidebar-logout-container {
   padding: 1rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid var(--sidebar-border, #e2e8f0);
 }
 
 .sidebar-logout-btn {
@@ -206,31 +206,44 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  border: none;
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
 .sidebar-logout-btn:hover {
-  background: rgba(239, 68, 68, 0.2);
+  background: #fee2e2;
+  color: #b91c1c;
 }
-
 
 /* --- App Layout Elements --- */
 #sidebarMenu,
 .app-offcanvas-sidebar {
   width: 280px !important;
   max-width: 280px !important;
-  background-color: #ffffff !important;
+  background-color: var(--sidebar-bg, #ffffff) !important;
+  border-right: 1px solid var(--sidebar-border, #e2e8f0) !important;
+  box-shadow: 1px 0 4px rgba(0, 0, 0, 0.02) !important;
+}
+
+.app-offcanvas-sidebar .offcanvas-header {
+  background-color: var(--sidebar-bg, #ffffff);
+  color: #0f172a;
+  border-bottom: 1px solid var(--sidebar-border, #e2e8f0);
+}
+
+.app-offcanvas-sidebar .btn-close {
+  filter: none;
 }
 
 .app-main-content {
   min-height: 100vh;
   position: relative;
+  background-color: var(--background, #f8fafc);
 }
 
 .app-mobile-nav {

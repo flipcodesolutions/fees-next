@@ -304,7 +304,7 @@ export default function FollowUpScreen({ onCompleted }: FollowUpScreenProps) {
                             toast.error('Update failed.');
                           }
                         }}
-                        className="select-plain-bold"
+                        className={`select-plain-bold status-pill status-${(task.status || 'Pending').toLowerCase().replace(/\s+/g, '-')}`}
                       >
                         {statusOptions.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
                       </select>

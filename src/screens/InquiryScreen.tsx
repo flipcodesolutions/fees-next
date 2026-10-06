@@ -476,7 +476,7 @@ export default function InquiryScreen({ onCompleted }: InquiryScreenProps) {
                               }
                             }
                           }}
-                          className="select-plain-bold"
+                          className={`select-plain-bold status-pill status-${(row.status || 'Pending').toLowerCase().replace(/\s+/g, '-')}`}
                         >
                           {statusOptions.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
                         </select>
