@@ -64,59 +64,34 @@ export default function PendingFeesScreen() {
 
   return (
     <section className="screen fees">
-      <header className="topbar" style={{
-        position: 'sticky',
-        top: '-48px',
-        zIndex: 100,
-        background: 'var(--background)',
-        padding: '12px 0',
-        margin: '-48px 0 0 0',
-        borderBottom: '1px solid var(--outline-variant)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '16px',
-        minHeight: '80px',
-        width: 'calc(100% + 40px)',
-        marginLeft: '-20px',
-        paddingLeft: '20px',
-        paddingRight: '20px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <CalendarClock size={24} style={{ color: '#dc2626' }} />
-          <h2 style={{ fontSize: '28px', whiteSpace: 'nowrap' }}>Pending Fees</h2>
+      <header className="topbar topbar-sticky">
+        <div className="topbar-title-wrap">
+          <CalendarClock size={24} className="text-danger-icon" />
+          <h2 className="topbar-title-text">Pending Fees</h2>
         </div>
-        <div className="topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="topbar-actions">
           <label className="searchbox">
             <Search size={16} />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search name/mobile..." style={{ width: 160 }} />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search name/mobile..." className="search-input-sm" />
           </label>
         </div>
       </header>
 
       {error && (
-        <div className="card" style={{ padding: 14, borderColor: 'var(--error)' }}>
-          <strong style={{ color: 'var(--error)' }}>{error}</strong>
+        <div className="card crm-alert-card alert-error">
+          <strong>{error}</strong>
         </div>
       )}
 
       <div className="card">
         <div className="card-header-row">
           <div>
-            <h3 style={{ margin: 0 }}>Fees Due in {monthName}</h3>
-            <p className="muted" style={{ fontSize: 13, marginTop: 4, marginBottom: 0 }}>
+            <h3>Fees Due in {monthName}</h3>
+            <p className="muted text-muted-sm">
               Students whose next payment date falls in the current month
             </p>
           </div>
-          <span style={{
-            backgroundColor: 'rgba(220, 38, 38, 0.1)',
-            color: '#dc2626',
-            border: '1px solid rgba(220, 38, 38, 0.3)',
-            borderRadius: 20,
-            padding: '4px 14px',
-            fontWeight: 700,
-            fontSize: 14
-          }}>
+          <span className="pending-badge-count">
             {filteredFees.length} pending
           </span>
         </div>
@@ -138,39 +113,28 @@ export default function PendingFeesScreen() {
             <tbody>
               {filteredFees.length === 0 ? (
                 <tr>
-                  <td colSpan={9} style={{ textAlign: 'center', padding: 32 }}>
-                    <CalendarClock size={36} style={{ color: 'var(--outline)', marginBottom: 8, display: 'block', margin: '0 auto 8px' }} />
-                    <div style={{ fontWeight: 600, fontSize: 15 }}>No pending fees for {monthName}</div>
-                    <div className="muted" style={{ fontSize: 13, marginTop: 4 }}>All payments are up to date or no next payment dates are set</div>
+                  <td colSpan={9} className="table-empty-cell">
+                    <CalendarClock size={36} className="table-empty-icon" />
+                    <div className="text-semibold">No pending fees for {monthName}</div>
+                    <div className="muted text-muted-sm">All payments are up to date or no next payment dates are set</div>
                   </td>
                 </tr>
               ) : (
                 filteredFees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((f, index) => (
-                  <tr key={f.id} style={{ backgroundColor: 'rgba(220, 38, 38, 0.02)' }}>
+                  <tr key={f.id} className="pending-row-highlight">
                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                    <td style={{ fontWeight: 600 }}>{f.student_name}</td>
+                    <td className="text-semibold">{f.student_name}</td>
                     <td>{f.mobile}</td>
                     <td>₹{f.total_amount?.toFixed(2)}</td>
-                    <td style={{ color: 'var(--success)', fontWeight: 600 }}>₹{f.paid_amount?.toFixed(2)}</td>
-                    <td style={{ color: 'var(--error)', fontWeight: 700 }}>₹{f.remaining_amount?.toFixed(2)}</td>
+                    <td className="text-success-bold">₹{f.paid_amount?.toFixed(2)}</td>
+                    <td className="text-danger-bold">₹{f.remaining_amount?.toFixed(2)}</td>
                     <td>
                       <span className={`tag tag-${f.status?.toLowerCase().replace(' ', '-')}`}>
                         {f.status}
                       </span>
                     </td>
                     <td>
-                      <span style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 4,
-                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
-                        color: '#dc2626',
-                        border: '1px solid rgba(220, 38, 38, 0.3)',
-                        borderRadius: 4,
-                        padding: '2px 8px',
-                        fontSize: 12,
-                        fontWeight: 600
-                      }}>
+                      <span className="badge-overdue">
                         {formatDate(f.next_payment_date)}
                       </span>
                     </td>
@@ -186,11 +150,9 @@ export default function PendingFeesScreen() {
                         <button
                           className="icon-btn"
                           onClick={() => {
-                            // Navigate to Fees Management to add payment
                             window.location.hash = '#/fees';
                           }}
                           title="Go to Fees to Add Payment"
-                          style={{ color: 'var(--primary)' }}
                         >
                           <Wallet size={18} />
                         </button>
@@ -213,31 +175,31 @@ export default function PendingFeesScreen() {
       {/* Report Modal */}
       {reportFee && (
         <div className="modal-overlay">
-          <div className="modal-content-custom" style={{ maxWidth: 520 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <div className="modal-content-custom">
+            <div className="card-header-row p-0 mb-3">
               <h3>Fee Report: {reportFee.student_name}</h3>
               <button className="btn btn-ghost" onClick={() => setReportFee(null)}>Close</button>
             </div>
 
-            <div className="card" style={{ background: 'var(--surface-container-low)', marginBottom: 16 }}>
-              <div className="form-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', padding: 12 }}>
+            <div className="card modal-summary-box">
+              <div className="form-grid modal-summary-grid">
                 <div>
-                  <label className="muted" style={{ fontSize: 11 }}>Total Fees</label>
-                  <div style={{ fontWeight: 700 }}>₹{reportFee.total_amount}</div>
+                  <label className="muted modal-label-sm">Total Fees</label>
+                  <div className="text-bold">₹{reportFee.total_amount}</div>
                 </div>
                 <div>
-                  <label className="muted" style={{ fontSize: 11 }}>Total Paid</label>
-                  <div style={{ fontWeight: 700, color: 'var(--success)' }}>₹{reportFee.paid_amount}</div>
+                  <label className="muted modal-label-sm">Total Paid</label>
+                  <div className="text-bold text-success-bold">₹{reportFee.paid_amount}</div>
                 </div>
                 <div>
-                  <label className="muted" style={{ fontSize: 11 }}>Remaining</label>
-                  <div style={{ fontWeight: 700, color: 'var(--error)' }}>₹{reportFee.remaining_amount}</div>
+                  <label className="muted modal-label-sm">Remaining</label>
+                  <div className="text-bold text-danger-bold">₹{reportFee.remaining_amount}</div>
                 </div>
               </div>
             </div>
 
             <h4>Payment History</h4>
-            <div className="table-responsive" style={{ maxHeight: 280, overflowY: 'auto' }}>
+            <div className="table-responsive table-scroll-container">
               <table className="data-table table mini-table">
                 <thead>
                   <tr>
@@ -253,7 +215,7 @@ export default function PendingFeesScreen() {
                     payments.map(p => (
                       <tr key={p.id}>
                         <td>{formatDate(p.created_at)}</td>
-                        <td style={{ fontWeight: 600 }}>₹{p.amount}</td>
+                        <td className="text-semibold">₹{p.amount}</td>
                         <td>{p.remark}</td>
                       </tr>
                     ))

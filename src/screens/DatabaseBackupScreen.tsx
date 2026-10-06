@@ -22,7 +22,7 @@ export default function DatabaseBackupScreen() {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       setMessage({ type: 'success', text: 'Database exported successfully!' });
-    } catch (error: any) {
+    } catch {
       setMessage({ type: 'error', text: 'Failed to export database.' });
     } finally {
       setIsExporting(false);
@@ -70,53 +70,39 @@ export default function DatabaseBackupScreen() {
 
   return (
     <section className="screen database-backup">
-      <header className="topbar" style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '28px' }}>Database Backup & Restore</h2>
+      <header className="topbar">
+        <h2>Database Backup & Restore</h2>
       </header>
 
       {message && (
-        <div
-          className="card"
-          style={{
-            padding: '16px',
-            marginBottom: '24px',
-            borderColor: message.type === 'success' ? 'var(--success)' : 'var(--error)',
-            backgroundColor: message.type === 'success' ? 'rgba(76, 175, 80, 0.05)' : 'rgba(244, 67, 54, 0.05)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px'
-          }}
-        >
+        <div className={`card crm-alert-card ${message.type === 'success' ? 'alert-success' : 'alert-error'}`}>
           {message.type === 'success' ? (
-            <CheckCircle size={20} style={{ color: 'var(--success)' }} />
+            <CheckCircle size={20} />
           ) : (
-            <AlertTriangle size={20} style={{ color: 'var(--error)' }} />
+            <AlertTriangle size={20} />
           )}
-          <span style={{ fontWeight: 600, color: message.type === 'success' ? 'var(--success)' : 'var(--error)' }}>
-            {message.text}
-          </span>
+          <strong>{message.text}</strong>
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+      <div className="backup-grid">
         {/* Export Card */}
-        <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '260px' }}>
+        <div className="card backup-card">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <div style={{ padding: '12px', borderRadius: '12px', backgroundColor: 'rgba(var(--primary-rgb), 0.1)', color: 'var(--primary)' }}>
+            <div className="backup-card-header">
+              <div className="backup-icon-box backup-icon-export">
                 <Database size={24} />
               </div>
-              <h3 style={{ margin: 0 }}>Backup Database</h3>
+              <h3>Backup Database</h3>
             </div>
-            <p className="muted" style={{ fontSize: '14px', lineHeight: '1.6', marginBottom: '24px' }}>
+            <p className="backup-card-desc">
               Download the complete system database as a <code>database.sqlite</code> file. You can keep this file safe as a backup copy.
             </p>
           </div>
           <button
-            className="btn btn-primary"
+            className="btn btn-primary backup-btn-full"
             onClick={handleExport}
             disabled={isExporting}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', height: '48px' }}
           >
             <Download size={18} />
             {isExporting ? 'Exporting...' : 'Download Backup File'}
@@ -124,36 +110,21 @@ export default function DatabaseBackupScreen() {
         </div>
 
         {/* Import Card */}
-        <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '260px' }}>
+        <div className="card backup-card">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <div style={{ padding: '12px', borderRadius: '12px', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
+            <div className="backup-card-header">
+              <div className="backup-icon-box backup-icon-import">
                 <Upload size={24} />
               </div>
-              <h3 style={{ margin: 0 }}>Restore Database</h3>
+              <h3>Restore Database</h3>
             </div>
-            <p className="muted" style={{ fontSize: '14px', lineHeight: '1.6', marginBottom: '24px' }}>
+            <p className="backup-card-desc">
               Upload a previously downloaded <code>database.sqlite</code> file to restore all student, inquiry, and payment records.
               <br />
-              <strong style={{ color: 'var(--error)' }}>Warning: This will overwrite current data!</strong>
+              <strong className="text-error-btn">Warning: This will overwrite current data!</strong>
             </p>
           </div>
-          <label
-            className="btn btn-outline-danger"
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              height: '48px',
-              cursor: isImporting ? 'not-allowed' : 'pointer',
-              opacity: isImporting ? 0.6 : 1,
-              border: '1px solid #ef4444',
-              color: '#ef4444',
-              backgroundColor: 'transparent'
-            }}
-          >
+          <label className="btn btn-outline-danger backup-btn-full">
             <Upload size={18} />
             {isImporting ? 'Restoring...' : 'Upload SQLite File'}
             <input
@@ -161,7 +132,7 @@ export default function DatabaseBackupScreen() {
               accept=".sqlite,.db,.sqlite3,*"
               onChange={handleImport}
               disabled={isImporting}
-              style={{ display: 'none' }}
+              className="d-none-input"
             />
           </label>
         </div>

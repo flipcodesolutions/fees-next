@@ -290,79 +290,56 @@ export default function InquiryScreen({ onCompleted }: InquiryScreenProps) {
 
   return (
     <section className="screen">
-      <header className="topbar" style={{
-        position: 'sticky',
-        top: '-48px',
-        zIndex: 100,
-        background: 'var(--background)',
-        padding: '12px 0',
-        margin: '-48px 0 0 0',
-        borderBottom: '1px solid var(--outline-variant)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '16px',
-        minHeight: '80px',
-        width: 'calc(100% + 40px)',
-        marginLeft: '-20px',
-        paddingLeft: '20px',
-        paddingRight: '20px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', whiteSpace: 'nowrap' }}>
-          <h2 style={{ fontSize: '28px' }}>{showDeleted ? 'Deleted' : 'Inquiry'}</h2>
+      <header className="topbar topbar-sticky">
+        <div className="topbar-flex-header">
+          <h2 className="topbar-title-md">{showDeleted ? 'Deleted' : 'Inquiry'}</h2>
         </div>
-        <div className="topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'nowrap' }}>
-          <label className="searchbox" style={{ margin: 0, width: '220px' }}>
+        <div className="topbar-actions topbar-actions-nowrap">
+          <label className="searchbox searchbox-compact">
             <Search size={16} />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by name/mobile..." style={{ width: '100%' }} />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by name/mobile..." className="w-full-input" />
           </label>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="filter-group-date">
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="btn btn-ghost"
-              style={{ border: '1px solid var(--outline-variant)', height: '40px', fontSize: '13px', padding: '0 8px', width: '130px' }}
+              className="btn btn-ghost filter-input-date"
               title="Start Date"
             />
-            <span style={{ color: 'var(--on-surface-variant)' }}>to</span>
+            <span className="text-on-surface-variant">to</span>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="btn btn-ghost"
-              style={{ border: '1px solid var(--outline-variant)', height: '40px', fontSize: '13px', padding: '0 8px', width: '130px' }}
+              className="btn btn-ghost filter-input-date"
               title="End Date"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="btn btn-ghost"
-            style={{ border: '1px solid var(--outline-variant)', height: '40px', fontSize: '13px', padding: '0 8px', width: '140px' }}
+            className="btn btn-ghost filter-select-course"
           >
             <option value="">All Status</option>
             {statusOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
           </select>
           <button
-            className="btn btn-sm btn-ghost"
+            className="btn btn-sm btn-ghost filter-btn-clear"
             onClick={() => { setQuery(''); setStartDate(''); setEndDate(''); setStatusFilter(''); }}
-            style={{ color: 'var(--error)', padding: '0 8px', fontWeight: 600, border: '1px solid var(--error)', background: 'transparent' }}
           >
             Clear All
           </button>
           <button
-            className={`btn px-2 py-1 text-sm ${showDeleted ? 'btn-primary' : 'btn-ghost'}`}
+            className={`btn px-2 py-1 text-sm ${showDeleted ? 'btn-primary filter-btn-toggle-deleted active' : 'btn-ghost filter-btn-toggle-deleted'}`}
             onClick={() => setShowDeleted(!showDeleted)}
-            style={{ height: '40px', minWidth: '40px', border: showDeleted ? 'none' : '1px solid var(--outline-variant)' }}
             title="Toggle Deleted Records"
           >
             <Trash2 size={20} />
           </button>
           <button
-            className="btn btn-primary px-4 py-1 text-sm"
+            className="btn btn-primary px-4 py-1 text-sm btn-action-add"
             onClick={openCreateForm}
-            style={{ height: '40px', minWidth: '100px' }}
           >
             <Plus size={20} />
             Add
@@ -373,7 +350,7 @@ export default function InquiryScreen({ onCompleted }: InquiryScreenProps) {
       {isFormOpen && (
         <div className="modal-overlay">
           <div className="modal-content-custom">
-            <h3 style={{ marginBottom: 16 }}>{editingId ? 'Update Inquiry' : 'Add Inquiry'}</h3>
+            <h3 className="mb-16">{editingId ? 'Update Inquiry' : 'Add Inquiry'}</h3>
             <form className="form-grid" onSubmit={saveInquiry}>
               <div>
                 <label>Full Name</label>
@@ -413,8 +390,8 @@ export default function InquiryScreen({ onCompleted }: InquiryScreenProps) {
       {viewInquiry && (
         <div className="modal-overlay">
           <div className="modal-content-custom">
-            <h3 style={{ marginBottom: 16 }}>Inquiry Details</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <h3 className="mb-16">Inquiry Details</h3>
+            <div className="flex-col-gap-12">
               <div><strong>Name:</strong> {viewInquiry.name}</div>
               <div><strong>Mobile:</strong> {viewInquiry.mobile}</div>
               <div><strong>Reference:</strong> {viewInquiry.reference_name}</div>
@@ -422,7 +399,7 @@ export default function InquiryScreen({ onCompleted }: InquiryScreenProps) {
               <div><strong>Remark:</strong> {viewInquiry.remark}</div>
               <div><strong>Status:</strong> {viewInquiry.status}</div>
             </div>
-            <div className="inline-actions form-actions" style={{ marginTop: 16, justifyContent: 'flex-end' }}>
+            <div className="inline-actions form-actions mt-16 justify-end">
               <button type="button" className="btn btn-ghost" onClick={() => setViewInquiry(null)}>Close</button>
             </div>
           </div>
@@ -431,21 +408,20 @@ export default function InquiryScreen({ onCompleted }: InquiryScreenProps) {
 
       <div className="card">
         <div className="card-header-row">
-          <h3 style={{ margin: 0 }}>{showDeleted ? 'Deleted Listed' : 'All Active Inquiries'}</h3>
+          <h3 className="card-title-m0">{showDeleted ? 'Deleted Listed' : 'All Active Inquiries'}</h3>
           <div className="inline-actions">
             {showDeleted && (
               <button
-                className="btn btn-ghost"
+                className="btn btn-ghost topbar-btn-back"
                 onClick={() => setShowDeleted(false)}
-                style={{ padding: '0 12px', height: '36px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', border: '1px solid var(--outline-variant)' }}
               >
-                <RotateCcw size={14} style={{ transform: 'rotate(-90deg)' }} />
+                <RotateCcw size={14} className="rotate-icon-back" />
                 Back
               </button>
             )}
             {!showDeleted && (
               <>
-                <input ref={fileInputRef} type="file" accept=".csv" style={{ display: 'none' }} onChange={importCsv} />
+                <input ref={fileInputRef} type="file" accept=".csv" className="d-none-input" onChange={importCsv} />
                 <button className="btn btn-ghost" onClick={() => fileInputRef.current?.click()}><FileUp size={14} />Import CSV</button>
                 <button className="btn btn-ghost" onClick={exportCsv}><Download size={14} />Export CSV</button>
               </>
@@ -500,7 +476,7 @@ export default function InquiryScreen({ onCompleted }: InquiryScreenProps) {
                               }
                             }
                           }}
-                          style={{ border: 'none', background: 'transparent', fontWeight: 'bold' }}
+                          className="select-plain-bold"
                         >
                           {statusOptions.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
                         </select>
@@ -511,8 +487,8 @@ export default function InquiryScreen({ onCompleted }: InquiryScreenProps) {
                           {!showDeleted && <button className="icon-btn" onClick={() => openEditForm(row)} title="Edit"><Pencil size={14} /></button>}
                           {showDeleted ? (
                             <>
-                              <button className="icon-btn" onClick={() => restoreInquiry(row)} title="Restore" style={{ color: 'var(--primary)' }}><RotateCcw size={14} /></button>
-                              <button className="icon-btn" onClick={() => void deleteInquiry(row.id)} title="Permanent Delete" style={{ color: 'var(--error)' }}><Trash2 size={14} /></button>
+                              <button className="icon-btn text-primary-btn" onClick={() => restoreInquiry(row)} title="Restore"><RotateCcw size={14} /></button>
+                              <button className="icon-btn text-error-btn" onClick={() => void deleteInquiry(row.id)} title="Permanent Delete"><Trash2 size={14} /></button>
                             </>
                           ) : (
                             <button className="icon-btn" onClick={() => softDeleteInquiry(row)} title="Move to Deleted"><Trash2 size={14} /></button>

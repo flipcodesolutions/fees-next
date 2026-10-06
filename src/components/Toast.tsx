@@ -36,7 +36,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <ToastContext.Provider value={{ showToast, success, error }}>
       {children}
-      <div style={styles.container}>
+      <div className="crm-toast-container">
         {toasts.map((toast) => (
           <ToastItem key={toast.id} toast={toast} onClose={() => removeToast(toast.id)} />
         ))}
@@ -53,35 +53,17 @@ const ToastItem: React.FC<{ toast: Toast; onClose: () => void }> = ({ toast, onC
     warning: <Bell size={20} color="#f59e0b" />,
   };
 
-  const bgColors = {
-    success: '#f0fdf4',
-    error: '#fef2f2',
-    info: '#eff6ff',
-    warning: '#fffbeb',
-  };
-
-  const borderColors = {
-    success: '#bbf7d0',
-    error: '#fecaca',
-    info: '#bfdbfe',
-    warning: '#fef3c7',
-  };
-
   return (
-    <div style={{
-      ...styles.toast,
-      backgroundColor: bgColors[toast.type],
-      borderColor: borderColors[toast.type],
-    }}>
-      <div style={styles.icon}>{icons[toast.type]}</div>
-      <div style={styles.message}>{toast.message}</div>
+    <div className={`crm-toast-item type-${toast.type}`}>
+      <div className="crm-toast-icon">{icons[toast.type]}</div>
+      <div className="crm-toast-message">{toast.message}</div>
       <button 
         type="button"
         onClick={(e) => {
           e.stopPropagation();
           onClose();
         }} 
-        style={styles.closeBtn}
+        className="crm-toast-close"
         aria-label="Close"
       >
         <X size={18} />
@@ -95,60 +77,3 @@ export const useToast = () => {
   if (!context) throw new Error('useToast must be used within a ToastProvider');
   return context;
 };
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    position: 'fixed',
-    top: '24px',
-    right: '24px',
-    zIndex: 9999,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px',
-    pointerEvents: 'none',
-  },
-  toast: {
-    pointerEvents: 'auto',
-    minWidth: '300px',
-    maxWidth: '450px',
-    padding: '16px',
-    borderRadius: '12px',
-    border: '1px solid',
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    animation: 'slideIn 0.3s ease-out forwards',
-  },
-  icon: {
-    flexShrink: 0,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  message: {
-    flex: 1,
-    fontSize: '14px',
-    fontWeight: 500,
-    color: '#1f2937',
-  },
-  closeBtn: {
-    background: 'transparent',
-    border: 'none',
-    padding: '8px',
-    margin: '-4px',
-    cursor: 'pointer',
-    color: '#9ca3af',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: '50%',
-    transition: 'all 0.2s ease',
-    pointerEvents: 'auto',
-  },
-};
-
-// Add this to your global CSS
-// @keyframes slideIn {
-//   from { transform: translateX(100%); opacity: 0; }
-//   to { transform: translateX(0); opacity: 1; }
-// }

@@ -193,72 +193,50 @@ export default function FollowUpScreen({ onCompleted }: FollowUpScreenProps) {
 
   return (
     <section className="screen">
-      <header className="topbar" style={{ 
-        position: 'sticky', 
-        top: '-48px', 
-        zIndex: 100, 
-        background: 'var(--background)', 
-        padding: '12px 0',
-        margin: '-48px 0 0 0',
-        borderBottom: '1px solid var(--outline-variant)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '16px',
-        minHeight: '80px',
-        width: 'calc(100% + 40px)',
-        marginLeft: '-20px',
-        paddingLeft: '20px',
-        paddingRight: '20px'
-      }}>
-        <h2 style={{ fontSize: '28px', whiteSpace: 'nowrap' }}>{showDeleted ? 'Deleted' : 'Follow-up'}</h2>
-        <div className="topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'nowrap' }}>
-          <label className="searchbox" style={{ margin: 0, width: '220px' }}>
+      <header className="topbar topbar-sticky">
+        <h2 className="topbar-title-nowrap">{showDeleted ? 'Deleted' : 'Follow-up'}</h2>
+        <div className="topbar-actions topbar-actions-nowrap">
+          <label className="searchbox searchbox-compact">
             <Search size={16} />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by name/mobile..."
-              style={{ width: '100%' }}
+              className="w-full-input"
             />
           </label>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="filter-group-date">
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="btn btn-ghost"
-              style={{ border: '1px solid var(--outline-variant)', height: '40px', fontSize: '13px', padding: '0 8px', width: '130px' }}
+              className="btn btn-ghost filter-input-date"
             />
             <span>to</span>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="btn btn-ghost"
-              style={{ border: '1px solid var(--outline-variant)', height: '40px', fontSize: '13px', padding: '0 8px', width: '130px' }}
+              className="btn btn-ghost filter-input-date"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="btn btn-ghost"
-            style={{ border: '1px solid var(--outline-variant)', height: '40px', fontSize: '13px', padding: '0 8px', width: '140px' }}
+            className="btn btn-ghost filter-select-course"
           >
             <option value="">All Status</option>
             {statusOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
           </select>
           <button
-            className="btn btn-sm btn-ghost"
+            className="btn btn-sm btn-ghost filter-btn-clear"
             onClick={() => { setQuery(''); setStartDate(''); setEndDate(''); setStatusFilter(''); }}
-            style={{ color: 'var(--error)', padding: '0 8px', fontWeight: 600, border: '1px solid var(--error)', background: 'transparent' }}
           >
             Clear All
           </button>
           <button
-            className={`btn px-2 py-1 text-sm ${showDeleted ? 'btn-primary' : 'btn-ghost'}`}
+            className={`btn px-2 py-1 text-sm ${showDeleted ? 'btn-primary filter-btn-toggle-deleted active' : 'btn-ghost filter-btn-toggle-deleted'}`}
             onClick={() => setShowDeleted(!showDeleted)}
-            style={{ height: '40px', minWidth: '40px', border: showDeleted ? 'none' : '1px solid var(--outline-variant)' }}
             title="Toggle Deleted Records"
           >
             <Trash2 size={20} />
@@ -268,21 +246,20 @@ export default function FollowUpScreen({ onCompleted }: FollowUpScreenProps) {
 
       <div className="card">
         <div className="card-header-row">
-          <h3 style={{ margin: 0 }}>{showDeleted ? 'Deleted/Non-Interested Follow-ups' : 'Pending Follow-ups'}</h3>
+          <h3 className="card-title-m0">{showDeleted ? 'Deleted/Non-Interested Follow-ups' : 'Pending Follow-ups'}</h3>
           <div className="inline-actions">
             {showDeleted && (
               <button 
-                className="btn btn-ghost" 
+                className="btn btn-ghost topbar-btn-back" 
                 onClick={() => setShowDeleted(false)}
-                style={{ padding: '0 12px', height: '36px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', border: '1px solid var(--outline-variant)' }}
               >
-                <RotateCcw size={14} style={{ transform: 'rotate(-90deg)' }} />
+                <RotateCcw size={14} className="rotate-icon-back" />
                 Back
               </button>
             )}
             {!showDeleted && (
               <>
-                <input ref={fileInputRef} type="file" accept=".csv" style={{ display: 'none' }} onChange={importCsv} />
+                <input ref={fileInputRef} type="file" accept=".csv" className="d-none-input" onChange={importCsv} />
                 <button className="btn btn-ghost" onClick={() => fileInputRef.current?.click()}><FileUp size={14} />Import CSV</button>
                 <button className="btn btn-ghost" onClick={exportCsv}><Download size={14} />Export CSV</button>
               </>
@@ -327,7 +304,7 @@ export default function FollowUpScreen({ onCompleted }: FollowUpScreenProps) {
                             toast.error('Update failed.');
                           }
                         }}
-                        style={{ border: 'none', background: 'transparent', fontWeight: 'bold' }}
+                        className="select-plain-bold"
                       >
                         {statusOptions.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
                       </select>
@@ -336,8 +313,8 @@ export default function FollowUpScreen({ onCompleted }: FollowUpScreenProps) {
                       <div className="row-actions">
                         {showDeleted ? (
                           <>
-                            <button className="icon-btn" onClick={() => restoreInquiry(task)} title="Restore" style={{ color: 'var(--primary)' }}><RotateCcw size={14} /></button>
-                            <button className="icon-btn" onClick={() => void deleteInquiry(task.id)} title="Permanent Delete" style={{ color: 'var(--error)' }}><Trash2 size={14} /></button>
+                            <button className="icon-btn text-primary-btn" onClick={() => restoreInquiry(task)} title="Restore"><RotateCcw size={14} /></button>
+                            <button className="icon-btn text-error-btn" onClick={() => void deleteInquiry(task.id)} title="Permanent Delete"><Trash2 size={14} /></button>
                           </>
                         ) : (
                           <button className="icon-btn" onClick={() => softDeleteInquiry(task)} title="Move to Deleted"><Trash2 size={14} /></button>

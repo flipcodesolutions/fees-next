@@ -182,66 +182,43 @@ export default function ReceiptReportScreen() {
   return (
     <section className="screen receipt-report">
       {/* Top Header Bar */}
-      <header
-        className="topbar"
-        style={{
-          position: 'sticky',
-          top: '-48px',
-          zIndex: 100,
-          background: 'var(--background)',
-          padding: '12px 0',
-          margin: '-48px 0 0 0',
-          borderBottom: '1px solid var(--outline-variant)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: '16px',
-          minHeight: '80px',
-          width: 'calc(100% + 40px)',
-          marginLeft: '-20px',
-          paddingLeft: '20px',
-          paddingRight: '20px'
-        }}
-      >
-        <h2 style={{ fontSize: '28px', whiteSpace: 'nowrap' }}>Receipt Report</h2>
+      <header className="topbar topbar-sticky">
+        <h2 className="topbar-title-text">Receipt Report</h2>
 
-        <div className="topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'nowrap' }}>
+        <div className="topbar-actions">
           {/* Search Bar */}
-          <label className="searchbox" style={{ margin: 0, width: 170 }}>
+          <label className="searchbox search-input-sm">
             <Search size={16} />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search student..."
-              style={{ width: '100%' }}
+              className="search-input-full"
             />
           </label>
 
           {/* Date Range Filtering */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <div className="d-flex align-items-center gap-1">
             <Calendar size={18} />
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="btn btn-ghost"
-              style={{ border: '1px solid var(--outline-variant)', height: 42, fontSize: 12, padding: '0 8px' }}
+              className="btn btn-ghost filter-date-btn"
               title="From Payment Date"
             />
-            <span className="muted" style={{ fontSize: 12 }}>to</span>
+            <span className="muted text-muted-sm">to</span>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="btn btn-ghost"
-              style={{ border: '1px solid var(--outline-variant)', height: 42, fontSize: 12, padding: '0 8px' }}
+              className="btn btn-ghost filter-date-btn"
               title="To Payment Date"
             />
             {(startDate || endDate) && (
               <button
-                className="btn btn-sm btn-ghost"
+                className="btn btn-sm btn-ghost filter-btn-danger"
                 onClick={() => { setStartDate(''); setEndDate(''); }}
-                style={{ color: 'var(--error)', height: 42, display: 'flex', alignItems: 'center', gap: 4 }}
                 title="Clear Date Filter"
               >
                 <RotateCcw size={14} />
@@ -251,9 +228,8 @@ export default function ReceiptReportScreen() {
 
           {/* Refresh / Restart Button */}
           <button
-            className="btn btn-ghost"
+            className="btn btn-ghost filter-btn-ghost"
             onClick={loadData}
-            style={{ border: '1px solid var(--outline-variant)', height: 42, display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}
             title="Reload latest fees & receipts"
           >
             <RotateCcw size={14} />
@@ -262,9 +238,8 @@ export default function ReceiptReportScreen() {
 
           {/* Export Button */}
           <button
-            className="btn btn-primary"
+            className="btn btn-primary filter-btn-primary"
             onClick={exportToExcel}
-            style={{ height: 42, display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}
             title="Export CSV"
           >
             <Download size={14} />
@@ -275,59 +250,31 @@ export default function ReceiptReportScreen() {
 
       {/* Success Notification Alert */}
       {successMsg && (
-        <div
-          className="card"
-          style={{
-            marginTop: 16,
-            marginBottom: 8,
-            padding: '10px 16px',
-            backgroundColor: '#dcfce7',
-            borderColor: '#86efac',
-            color: '#166534',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            borderRadius: 8
-          }}
-        >
+        <div className="card crm-alert-card alert-success">
           <CheckCircle2 size={18} />
-          <span style={{ fontSize: 14, fontWeight: 500 }}>{successMsg}</span>
+          <span>{successMsg}</span>
         </div>
       )}
 
       {/* Error Notification Alert */}
       {error && (
-        <div
-          className="card"
-          style={{
-            marginTop: 16,
-            marginBottom: 8,
-            padding: '10px 16px',
-            backgroundColor: '#fee2e2',
-            borderColor: '#fca5a5',
-            color: '#991b1b',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            borderRadius: 8
-          }}
-        >
+        <div className="card crm-alert-card alert-error">
           <AlertCircle size={18} />
-          <span style={{ fontSize: 14, fontWeight: 500 }}>{error}</span>
+          <span>{error}</span>
         </div>
       )}
 
       {/* Card with card-header-row */}
-      <div className="card" style={{ marginTop: 16 }}>
+      <div className="card mt-3">
         <div className="card-header-row">
-          <h3 style={{ margin: 0 }}>All Receipts</h3>
+          <h3 className="m-0">All Receipts</h3>
         </div>
 
         <div className="table-responsive">
           <table className="data-table table">
             <thead>
               <tr>
-                <th style={{ width: '60px', textAlign: 'center' }}>No</th>
+                <th className="table-cell-num">No</th>
                 <th>Student Name</th>
                 <th>Payment Date</th>
                 <th>Amount</th>
@@ -338,8 +285,8 @@ export default function ReceiptReportScreen() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: '40px 16px', color: '#6b7280' }}>
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10 }}>
+                  <td colSpan={6} className="table-empty-cell">
+                    <div className="d-flex justify-content-center align-items-center gap-2">
                       <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                       <span>Loading receipt entries...</span>
                     </div>
@@ -347,19 +294,18 @@ export default function ReceiptReportScreen() {
                 </tr>
               ) : paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: '48px 16px', color: '#6b7280' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                      <strong style={{ fontSize: 16, color: '#374151' }}>No Receipt Entries Found</strong>
-                      <p style={{ margin: 0, fontSize: 13, color: '#6b7280' }}>
+                  <td colSpan={6} className="table-empty-cell">
+                    <div className="d-flex flex-column align-items-center gap-2">
+                      <strong className="fs-6 text-dark">No Receipt Entries Found</strong>
+                      <p className="m-0 text-muted-sm">
                         {query || startDate || endDate
                           ? 'Try adjusting your search query or date filters.'
                           : 'No fee payment entries have been logged in the system yet.'}
                       </p>
                       {(query || startDate || endDate) && (
                         <button
-                          className="btn btn-sm btn-ghost"
+                          className="btn btn-sm btn-ghost mt-2 border"
                           onClick={() => { setQuery(''); setStartDate(''); setEndDate(''); }}
-                          style={{ marginTop: 8, border: '1px solid var(--outline-variant)' }}
                         >
                           Clear Filters
                         </button>
@@ -377,17 +323,17 @@ export default function ReceiptReportScreen() {
                   return (
                     <tr key={item.id || index}>
                       {/* 1. No */}
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#6b7280' }}>
+                      <td className="table-cell-center text-semibold text-secondary">
                         {serialNo}
                       </td>
 
                       {/* 2. Student Name */}
                       <td>
-                        <div style={{ fontWeight: 600 }}>
+                        <div className="text-semibold">
                           {item.student_name || '-'}
                         </div>
                         {item.mobile && (
-                          <div style={{ fontSize: '12px', color: '#6b7280', marginTop: 2 }}>
+                          <div className="text-muted-xs">
                             {item.mobile}
                           </div>
                         )}
@@ -399,34 +345,24 @@ export default function ReceiptReportScreen() {
                       </td>
 
                       {/* 4. Amount */}
-                      <td style={{ fontWeight: 700, color: '#16a34a' }}>
+                      <td className="text-success-bold">
                         ₹{Number(item.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
 
                       {/* 5. Next Payment Date */}
                       <td>
                         {nextDateFormatted !== '-' ? (
-                          <span
-                            style={{
-                              display: 'inline-block',
-                              padding: '2px 8px',
-                              borderRadius: 4,
-                              background: '#eff6ff',
-                              color: '#1d4ed8',
-                              fontWeight: 500,
-                              fontSize: 13
-                            }}
-                          >
+                          <span className="badge-next-date">
                             {nextDateFormatted}
                           </span>
                         ) : (
-                          <span style={{ color: '#9ca3af' }}>-</span>
+                          <span className="text-muted">-</span>
                         )}
                       </td>
 
                       {/* 6. Remark */}
-                      <td style={{ maxWidth: 220 }}>
-                        <span style={{ display: 'inline-block', whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                      <td className="table-cell-remark">
+                        <span>
                           {item.remark || '-'}
                         </span>
                       </td>

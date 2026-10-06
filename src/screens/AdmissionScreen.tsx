@@ -518,56 +518,37 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
 
   return (
     <section className="screen admission">
-      <header className="topbar" style={{
-        position: 'sticky',
-        top: '-48px',
-        zIndex: 100,
-        background: 'var(--background)',
-        padding: '12px 0',
-        margin: '-48px 0 0 0',
-        borderBottom: '1px solid var(--outline-variant)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '16px',
-        minHeight: '80px',
-        width: 'calc(100% + 40px)',
-        marginLeft: '-20px',
-        paddingLeft: '20px',
-        paddingRight: '20px'
-      }}>
-        <h2 style={{ fontSize: '28px', whiteSpace: 'nowrap' }}>{showDeleted ? 'Deleted' : 'Admissions'}</h2>
-        <div className="topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'nowrap' }}>
-          <label className="searchbox" style={{ margin: 0, width: 160 }}>
+      <header className="topbar topbar-sticky">
+        <h2 className="topbar-title-nowrap">{showDeleted ? 'Deleted' : 'Admissions'}</h2>
+        <div className="topbar-actions topbar-actions-flex">
+          <label className="searchbox searchbox-160">
             <Search size={16} />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search student/course..." style={{ width: '100%' }} />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search student/course..." className="w-full-input" />
           </label>
           {view === 'list' && (
             <>
               <select
                 value={courseFilter}
                 onChange={(e) => setCourseFilter(e.target.value)}
-                className="btn btn-ghost"
-                style={{ border: '1px solid var(--outline-variant)', height: 42, fontSize: 12, padding: '0 8px', width: 130 }}
+                className="btn btn-ghost filter-select-course-130"
               >
                 <option value="">All Courses</option>
                 {courses.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
               </select>
-              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="btn btn-ghost" style={{ border: '1px solid var(--outline-variant)', height: 42, fontSize: 12 }} title="Start Date" />
-              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="btn btn-ghost" style={{ border: '1px solid var(--outline-variant)', height: 42, fontSize: 12 }} title="End Date" />
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="btn btn-ghost filter-input-date-sm" title="Start Date" />
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="btn btn-ghost filter-input-date-sm" title="End Date" />
 
               {(startDate || endDate || query || courseFilter || docFilter || certFilter) && (
-                <button className="btn btn-sm btn-ghost" onClick={() => { setStartDate(''); setEndDate(''); setQuery(''); setCourseFilter(''); setDocFilter(''); setCertFilter(''); }} style={{ color: 'var(--error)', padding: '0 8px', border: '1px solid var(--error)', height: 42 }}>Clear</button>
+                <button className="btn btn-sm btn-ghost filter-btn-clear-42" onClick={() => { setStartDate(''); setEndDate(''); setQuery(''); setCourseFilter(''); setDocFilter(''); setCertFilter(''); }}>Clear</button>
               )}
               <button
-                className={`btn px-2 py-1 text-sm ${showDeleted ? 'btn-primary' : 'btn-ghost'}`}
+                className={`btn px-2 py-1 text-sm ${showDeleted ? 'btn-primary filter-btn-toggle-deleted active' : 'btn-ghost filter-btn-toggle-deleted'}`}
                 onClick={() => setShowDeleted(!showDeleted)}
-                style={{ height: '40px', minWidth: '40px', border: showDeleted ? 'none' : '1px solid var(--outline-variant)' }}
                 title="Toggle Deleted Records"
               >
                 <Trash2 size={20} />
               </button>
-              <button className="btn btn-primary" onClick={() => navigate('/inquiry', { state: { openAddForm: true, defaultStatus: 'Completed' } })} style={{ height: 42 }}>
+              <button className="btn btn-primary filter-btn-primary" onClick={() => navigate('/inquiry', { state: { openAddForm: true, defaultStatus: 'Completed' } })}>
                 <Plus size={16} /> Add
               </button>
             </>
@@ -577,16 +558,16 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
 
 
       {error && (
-        <div className="card" style={{ padding: 14, borderColor: 'color-mix(in srgb, var(--error) 25%, var(--surface-container-high))' }}>
-          <strong style={{ color: 'var(--error)' }}>{error}</strong>
+        <div className="card card-error-p14">
+          <strong className="text-error-btn">{error}</strong>
         </div>
       )}
 
       {view === 'wizard' && (
         <div className="card inquiry-form-card">
-          <div className="card-header-row" style={{ padding: 0, marginBottom: 10 }}>
+          <div className="card-header-row card-header-p0-mb10">
             <h3>Create Admission</h3>
-            <p className="muted" style={{ marginTop: 6 }}>
+            <p className="muted mt-6">
               Step {step} of 3
             </p>
           </div>
@@ -620,8 +601,8 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
           )}
 
           {step === 2 && (
-            <div style={{ display: 'grid', gap: 14 }}>
-              <div className="field-grid" style={{ gridTemplateColumns: '1fr' }}>
+            <div className="grid-gap-14">
+              <div className="field-grid field-grid-1col">
                 <div className="span-2">
                   <label>Select Courses (multiple)</label>
                   <div className="course-select-grid">
@@ -656,8 +637,8 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
                 </div>
 
                 {selectedCourses.length > 0 && (
-                  <div className="span-2" style={{ marginTop: 8 }}>
-                    <div style={{ fontWeight: 700, marginBottom: 8 }}>Selected Courses</div>
+                  <div className="span-2 mt-8">
+                    <div className="text-bold-700 mb-8">Selected Courses</div>
                     <div className="table-responsive">
                       <table className="data-table mini-table table">
                         <thead>
@@ -676,14 +657,7 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
                               <td>{c.courseName}</td>
                               <td>{c.duration ?? '-'}</td>
                               <td>{c.baseFees}</td>
-                              <td
-                                style={{
-                                  maxWidth: 220,
-                                  whiteSpace: 'nowrap',
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                }}
-                              >
+                              <td className="table-cell-ellipsis">
                                 {c.details ?? '-'}
                               </td>
                             </tr>
@@ -695,7 +669,7 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
                 )}
               </div>
 
-              <div className="inline-actions" style={{ justifyContent: 'flex-end' }}>
+              <div className="inline-actions justify-end">
                 <button className="btn btn-ghost" type="button" onClick={() => setStep(1)}>Back</button>
                 <button className="btn btn-primary" type="button" onClick={goNextFromCourses}>Next</button>
               </div>
@@ -703,7 +677,7 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
           )}
 
           {step === 3 && (
-            <div style={{ display: 'grid', gap: 14 }}>
+            <div className="grid-gap-14">
               <div className="table-responsive">
                 <table className="data-table table">
                   <thead>
@@ -712,13 +686,13 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
                       <th>Base Fees</th>
                       <th>Start Date</th>
                       <th>Final Fees</th>
-                      <th style={{ textAlign: 'center' }}>Document</th>
-                      <th style={{ textAlign: 'center' }}>Certificate</th>
+                      <th className="text-center">Document</th>
+                      <th className="text-center">Certificate</th>
                     </tr>
                   </thead>
                   <tbody>
                     {selectedCourses.length === 0 ? (
-                      <tr><td colSpan={6}>No course selected123.</td></tr>
+                      <tr><td colSpan={6}>No course selected</td></tr>
                     ) : (
                       selectedCourses.map((c, idx) => (
                         <tr key={`${c.courseId ?? c.courseName}-${idx}`}>
@@ -744,7 +718,7 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
                               placeholder="Final fees (₹)"
                             />
                           </td>
-                          <td style={{ textAlign: 'center' }}>
+                          <td className="text-center">
                             <input
                               type="checkbox"
                               checked={!!c.hasDocument}
@@ -752,10 +726,10 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
                                 const checked = e.target.checked;
                                 setSelectedCourses((prev) => prev.map((p, i) => (i === idx ? { ...p, hasDocument: checked } : p)));
                               }}
-                              style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: 'var(--primary)' }}
+                              className="checkbox-custom"
                             />
                           </td>
-                          <td style={{ textAlign: 'center' }}>
+                          <td className="text-center">
                             <input
                               type="checkbox"
                               checked={!!c.hasCertificate}
@@ -763,7 +737,7 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
                                 const checked = e.target.checked;
                                 setSelectedCourses((prev) => prev.map((p, i) => (i === idx ? { ...p, hasCertificate: checked } : p)));
                               }}
-                              style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: 'var(--primary)' }}
+                              className="checkbox-custom"
                             />
                           </td>
                         </tr>
@@ -772,7 +746,7 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
                   </tbody>
                 </table>
               </div>
-              <div className="inline-actions" style={{ justifyContent: 'flex-end' }}>
+              <div className="inline-actions justify-end">
                 <button className="btn btn-ghost" type="button" onClick={() => setStep(2)}>Back</button>
                 <button className="btn btn-primary" type="button" onClick={submitAdmission}>Submit</button>
               </div>
@@ -784,21 +758,20 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
       {view === 'list' && (
         <div className="card">
           <div className="card-header-row">
-            <h3 style={{ margin: 0 }}>{showDeleted ? 'Deleted' : 'Admissions'}</h3>
+            <h3 className="card-title-m0">{showDeleted ? 'Deleted' : 'Admissions'}</h3>
             <div className="inline-actions">
               {showDeleted && (
                 <button
-                  className="btn btn-ghost"
+                  className="btn btn-ghost topbar-btn-back"
                   onClick={() => setShowDeleted(false)}
-                  style={{ padding: '0 12px', height: '36px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', border: '1px solid var(--outline-variant)' }}
                 >
-                  <RotateCcw size={14} style={{ transform: 'rotate(-90deg)' }} />
+                  <RotateCcw size={14} className="rotate-icon-back" />
                   Back
                 </button>
               )}
               {!showDeleted && (
                 <>
-                  <input ref={fileInputRef} type="file" accept=".csv" style={{ display: 'none' }} onChange={importCsv} />
+                  <input ref={fileInputRef} type="file" accept=".csv" className="d-none-input" onChange={importCsv} />
                   <button className="btn btn-ghost" onClick={() => fileInputRef.current?.click()}><FileUp size={14} />Import CSV</button>
                   <button className="btn btn-ghost" onClick={() => setIsExportModalOpen(true)}><Download size={14} />Export CSV</button>
                 </>
@@ -814,11 +787,11 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
                   <th>Course Name</th>
                   <th>Start Date</th>
                   <th>Final Fees</th>
-                  <th style={{ textAlign: 'center' }}>
+                  <th className="text-center">
                     <select
                       value={docFilter}
                       onChange={(e) => setDocFilter(e.target.value)}
-                      style={{ background: 'transparent', border: 'none', fontWeight: 600, fontSize: 'inherit', color: 'inherit', cursor: 'pointer', outline: 'none' }}
+                      className="select-table-filter"
                       title="Filter by Document Status"
                     >
                       <option value="">Doc</option>
@@ -826,11 +799,11 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
                       <option value="no">No</option>
                     </select>
                   </th>
-                  <th style={{ textAlign: 'center' }}>
+                  <th className="text-center">
                     <select
                       value={certFilter}
                       onChange={(e) => setCertFilter(e.target.value)}
-                      style={{ background: 'transparent', border: 'none', fontWeight: 600, fontSize: 'inherit', color: 'inherit', cursor: 'pointer', outline: 'none' }}
+                      className="select-table-filter"
                       title="Filter by Certificate Status"
                     >
                       <option value="">Cert</option>
@@ -864,35 +837,13 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
                         <td className="truncate-text-lg" title={courseNames}>{courseNames}</td>
                         <td className="truncate-text" title={startDates || '-'}>{startDates || '-'}</td>
                         <td>{coursesList.length > 0 ? `₹${totalFinalFees.toFixed(2)}` : '-'}</td>
-                        <td style={{ textAlign: 'center' }}>
-                          <span
-                            style={{
-                              display: 'inline-block',
-                              padding: '2px 8px',
-                              borderRadius: '4px',
-                              fontSize: '11px',
-                              fontWeight: 600,
-                              backgroundColor: hasDoc ? 'rgba(37, 211, 102, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                              color: hasDoc ? '#128C7E' : '#EF4444',
-                              border: hasDoc ? '1px solid rgba(37, 211, 102, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)'
-                            }}
-                          >
+                        <td className="text-center">
+                          <span className={hasDoc ? 'badge-doc-yes' : 'badge-doc-no'}>
                             {hasDoc ? 'Yes' : 'No'}
                           </span>
                         </td>
-                        <td style={{ textAlign: 'center' }}>
-                          <span
-                            style={{
-                              display: 'inline-block',
-                              padding: '2px 8px',
-                              borderRadius: '4px',
-                              fontSize: '11px',
-                              fontWeight: 600,
-                              backgroundColor: hasCert ? 'rgba(37, 211, 102, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                              color: hasCert ? '#128C7E' : '#EF4444',
-                              border: hasCert ? '1px solid rgba(37, 211, 102, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)'
-                            }}
-                          >
+                        <td className="text-center">
+                          <span className={hasCert ? 'badge-doc-yes' : 'badge-doc-no'}>
                             {hasCert ? 'Yes' : 'No'}
                           </span>
                         </td>
@@ -902,8 +853,8 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
                             {!showDeleted && <button className="icon-btn" onClick={() => startEditAdmission(a)}><Pencil size={14} /></button>}
                             {showDeleted ? (
                               <>
-                                <button className="icon-btn" onClick={() => restoreAdmission(a)} title="Restore" style={{ color: 'var(--primary)' }}><RotateCcw size={14} /></button>
-                                <button className="icon-btn" onClick={() => void deleteAdmission(a.id)} title="Permanent Delete" style={{ color: 'var(--error)' }}><Trash2 size={14} /></button>
+                                <button className="icon-btn text-primary-btn" onClick={() => restoreAdmission(a)} title="Restore"><RotateCcw size={14} /></button>
+                                <button className="icon-btn text-error-btn" onClick={() => void deleteAdmission(a.id)} title="Permanent Delete"><Trash2 size={14} /></button>
                               </>
                             ) : (
                               <button className="icon-btn" onClick={() => softDeleteAdmission(a)} title="Move to Deleted"><Trash2 size={14} /></button>
@@ -929,21 +880,21 @@ export default function AdmissionScreen({ mode, inquiry, onListMode }: Admission
       {isExportModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content-custom">
-            <h3 style={{ marginBottom: 16 }}>Export Admissions</h3>
-            <p className="muted" style={{ marginBottom: 20 }}>Select the date range to export admissions.</p>
+            <h3 className="mb-16">Export Admissions</h3>
+            <p className="muted mb-20">Select the date range to export admissions.</p>
             <div className="form-grid">
               <div>
                 <label>Start Date</label>
-                <input type="date" value={exportStartDate} onChange={(e) => setExportStartDate(e.target.value)} className="btn btn-ghost" style={{ border: '1px solid var(--outline-variant)', height: 42, fontSize: 12, width: '100%' }} />
+                <input type="date" value={exportStartDate} onChange={(e) => setExportStartDate(e.target.value)} className="btn btn-ghost filter-input-date-full" />
               </div>
               <div>
                 <label>End Date</label>
-                <input type="date" value={exportEndDate} onChange={(e) => setExportEndDate(e.target.value)} className="btn btn-ghost" style={{ border: '1px solid var(--outline-variant)', height: 42, fontSize: 12, width: '100%' }} />
+                <input type="date" value={exportEndDate} onChange={(e) => setExportEndDate(e.target.value)} className="btn btn-ghost filter-input-date-full" />
               </div>
-              <div className="inline-actions form-actions span-2" style={{ marginTop: 16 }}>
+              <div className="inline-actions form-actions span-2 mt-16">
                 <button type="button" className="btn btn-ghost" onClick={() => setIsExportModalOpen(false)}>Cancel</button>
-                <button type="button" className="btn btn-ghost" onClick={() => { setExportStartDate(''); setExportEndDate(''); }} style={{ color: 'var(--error)' }}>Reset</button>
-                <button type="button" className="btn btn-primary" onClick={exportCsv} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <button type="button" className="btn btn-ghost text-error-btn" onClick={() => { setExportStartDate(''); setExportEndDate(''); }}>Reset</button>
+                <button type="button" className="btn btn-primary filter-btn-primary" onClick={exportCsv}>
                   <Download size={16} /> Download CSV
                 </button>
               </div>

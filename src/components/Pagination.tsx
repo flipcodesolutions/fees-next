@@ -13,7 +13,7 @@ export default function Pagination({ currentPage, totalItems, itemsPerPage, onPa
   if (totalPages <= 1) return null;
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '8px', padding: '16px' }}>
+    <div className="crm-pagination">
       <button 
         className="icon-btn" 
         disabled={currentPage === 1}
@@ -21,7 +21,7 @@ export default function Pagination({ currentPage, totalItems, itemsPerPage, onPa
       >
         <ChevronLeft size={16} />
       </button>
-      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>
+      <span className="crm-pagination-info">
         Page {currentPage} of {totalPages}
       </span>
       <button 

@@ -463,35 +463,17 @@ export default function FeesScreen() {
 
   return (
     <section className="screen fees">
-      <header className="topbar" style={{
-        position: 'sticky',
-        top: '-48px',
-        zIndex: 100,
-        background: 'var(--background)',
-        padding: '12px 0',
-        margin: '-48px 0 0 0',
-        borderBottom: '1px solid var(--outline-variant)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '16px',
-        minHeight: '80px',
-        width: 'calc(100% + 40px)',
-        marginLeft: '-20px',
-        paddingLeft: '20px',
-        paddingRight: '20px'
-      }}>
-        <h2 style={{ fontSize: '28px', whiteSpace: 'nowrap' }}>Fees Management</h2>
-        <div className="topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'nowrap' }}>
-          <label className="searchbox">
+      <header className="topbar topbar-sticky">
+        <h2 className="topbar-title-nowrap">Fees Management</h2>
+        <div className="topbar-actions topbar-actions-flex">
+          <label className="searchbox searchbox-sm">
             <Search size={16} />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by name/mobile..." style={{ width: 150 }} />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by name/mobile..." className="searchbox-sm" />
           </label>
           <select
             value={statusFilter}
             onChange={(e) => setSearchParams({ status: e.target.value })}
-            className="btn btn-ghost"
-            style={{ border: '1px solid var(--outline-variant)', height: 42, padding: '0 12px' }}
+            className="btn btn-ghost filter-select-year"
           >
             <option value="">All Status</option>
             <option value="Pending">Pending</option>
@@ -499,18 +481,16 @@ export default function FeesScreen() {
             <option value="Complete">Complete</option>
           </select>
           <button
-            className="btn btn-primary"
+            className="btn btn-primary whatsapp-btn"
             onClick={handleOpenBulkConfirm}
             disabled={isBulkSending}
-            style={{ backgroundColor: '#25D366', borderColor: '#128C7E', display: 'flex', alignItems: 'center', gap: 6, height: 42 }}
           >
             <Send size={16} />
             {isBulkSending ? 'Sending...' : 'Send All'}
           </button>
           <button
-            className={`btn px-2 py-1 text-sm ${showDeleted ? 'btn-primary' : 'btn-ghost'}`}
+            className={`btn px-2 py-1 text-sm ${showDeleted ? 'btn-primary filter-btn-toggle-deleted active' : 'btn-ghost filter-btn-toggle-deleted'}`}
             onClick={() => setShowDeleted(!showDeleted)}
-            style={{ height: '42px', minWidth: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: showDeleted ? 'none' : '1px solid var(--outline-variant)' }}
             title="Toggle Deleted Records"
           >
             <Trash2 size={20} />
@@ -518,40 +498,16 @@ export default function FeesScreen() {
         </div>
       </header>
 
-
-
       {successMsg && (
-        <div style={{
-          position: 'fixed',
-          top: 20,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 9999,
-          backgroundColor: '#25D366',
-          color: 'white',
-          padding: '12px 24px',
-          borderRadius: 12,
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          fontWeight: 600,
-          animation: 'slideDown 0.3s ease-out'
-        }}>
+        <div className="crm-floating-banner">
           <CheckCircle2 size={20} />
           {successMsg}
-          <style>{`
-            @keyframes slideDown {
-              from { transform: translate(-50%, -100%); opacity: 0; }
-              to { transform: translate(-50%, 0); opacity: 1; }
-            }
-          `}</style>
         </div>
       )}
 
       {error && (
-        <div className="card" style={{ padding: 14, borderColor: 'var(--error)' }}>
-          <strong style={{ color: 'var(--error)' }}>{error}</strong>
+        <div className="card crm-alert-card alert-error">
+          <strong>{error}</strong>
         </div>
       )}
 
@@ -561,16 +517,15 @@ export default function FeesScreen() {
           <div className="inline-actions">
             {showDeleted ? (
               <button
-                className="btn btn-ghost"
+                className="btn btn-ghost topbar-btn-back"
                 onClick={() => setShowDeleted(false)}
-                style={{ padding: '0 12px', height: '36px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', border: '1px solid var(--outline-variant)' }}
               >
-                <RotateCcw size={14} style={{ transform: 'rotate(-90deg)' }} />
+                <RotateCcw size={14} className="rotate-icon-back" />
                 Back
               </button>
             ) : (
-              <button className="btn btn-ghost" onClick={() => setIsExportModalOpen(true)} style={{ fontSize: 13 }}>
-                <Wallet size={14} style={{ marginRight: 6 }} /> Export CSV
+              <button className="btn btn-ghost" onClick={() => setIsExportModalOpen(true)}>
+                <Wallet size={14} className="mr-6" /> Export CSV
               </button>
             )}
           </div>
@@ -598,33 +553,32 @@ export default function FeesScreen() {
                   <tr key={f.id}>
                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td>
-                      <div style={{ fontWeight: 600 }}>{f.student_name}</div>
+                      <div className="student-name-cell">{f.student_name}</div>
                       {getCourseNames(f.payload_json) && (
-                        <div style={{ fontSize: 11, color: 'var(--outline)', marginTop: 2, fontWeight: 500 }}>
+                        <div className="course-sub-label">
                           {getCourseNames(f.payload_json)}
                         </div>
                       )}
                     </td>
                     <td>{f.mobile}</td>
                     <td>₹{f.total_amount?.toFixed(2)}</td>
-                    <td style={{ color: 'var(--success)', fontWeight: 600 }}>₹{f.paid_amount?.toFixed(2)}</td>
-                    <td style={{ color: 'var(--error)', fontWeight: 600 }}>₹{f.remaining_amount?.toFixed(2)}</td>
+                    <td className="text-success-bold">₹{f.paid_amount?.toFixed(2)}</td>
+                    <td className="text-error-bold">₹{f.remaining_amount?.toFixed(2)}</td>
                     <td>
                       <span className={`tag tag-${f.status?.toLowerCase().replace(' ', '-')}`}>
                         {f.status}
                       </span>
                     </td>
-                    <td style={{ fontSize: 12, color: f.next_payment_date ? 'var(--primary)' : 'var(--outline)' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <td className={f.next_payment_date ? 'next-date-active' : 'next-date-muted'}>
+                      <div className="filter-group-gap-4">
                         {formatDate(f.next_payment_date)}
                         {f.remaining_amount > 0 && (
                           <button
-                            className="icon-btn"
+                            className="icon-btn icon-edit-next-date"
                             onClick={() => {
                               setEditingDateAdmissionId(f.admission_id);
                               setTempNextDate(f.next_payment_date ? f.next_payment_date.slice(0, 10) : '');
                             }}
-                            style={{ padding: 2, height: 'auto', color: 'var(--outline)' }}
                             title="Edit Next Payment Date"
                           >
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
@@ -637,18 +591,16 @@ export default function FeesScreen() {
                         {showDeleted ? (
                           <>
                             <button
-                              className="icon-btn"
+                              className="icon-btn text-primary-btn"
                               onClick={() => handleRestoreFee(f)}
                               title="Restore"
-                              style={{ color: 'var(--primary)' }}
                             >
                               <RotateCcw size={18} />
                             </button>
                             <button
-                              className="icon-btn"
+                              className="icon-btn text-error-btn"
                               onClick={() => handlePermanentDeleteFee(f.admission_id)}
                               title="Permanent Delete"
-                              style={{ color: 'var(--error)' }}
                             >
                               <Trash2 size={18} />
                             </button>
@@ -656,7 +608,7 @@ export default function FeesScreen() {
                         ) : (
                           <>
                             <button
-                              className="icon-btn"
+                              className={`icon-btn ${f.remaining_amount <= 0 ? 'icon-disabled' : 'text-primary-btn'}`}
                               onClick={() => {
                                 setPayingFee(f);
                                 const today = new Date();
@@ -667,7 +619,6 @@ export default function FeesScreen() {
                                 setPaymentNextDate(f.next_payment_date ? f.next_payment_date.slice(0, 10) : '');
                               }}
                               disabled={f.remaining_amount <= 0}
-                              style={{ color: f.remaining_amount <= 0 ? 'var(--outline)' : 'var(--primary)' }}
                               title="Pay Fees"
                             >
                               <Wallet size={18} />
@@ -680,10 +631,9 @@ export default function FeesScreen() {
                               <FileText size={18} />
                             </button>
                             <button
-                              className="icon-btn"
+                              className={`icon-btn ${f.mobile ? 'text-success' : 'icon-disabled'}`}
                               onClick={() => handleOpenSingleReminderConfirm(f)}
                               disabled={!f.mobile || sendingReminderId === f.admission_id}
-                              style={{ color: f.mobile ? '#25D366' : 'var(--outline)' }}
                               title={f.mobile ? `Send WhatsApp Reminder to ${f.student_name}` : 'No mobile number'}
                             >
                               <MessageCircle size={18} fill={f.mobile ? '#25D366' : 'none'} />
@@ -712,7 +662,7 @@ export default function FeesScreen() {
         <div className="modal-overlay">
           <div className="modal-content-custom">
             <h3>Add Payment - {payingFee.student_name}</h3>
-            <p className="muted" style={{ marginBottom: 16 }}>
+            <p className="muted mb-16">
               Total: ₹{payingFee.total_amount} | Remaining: ₹{payingFee.remaining_amount}
             </p>
             <form onSubmit={handlePay} className="form-grid">
@@ -736,13 +686,13 @@ export default function FeesScreen() {
                 />
               </div>
               <div className="span-2">
-                <label>Next Payment Date {Number(paymentAmount) >= payingFee.remaining_amount ? <span style={{ color: 'var(--outline)', fontWeight: 400, fontSize: 11 }}>(N/A – Full Payment)</span> : null}</label>
+                <label>Next Payment Date {Number(paymentAmount) >= payingFee.remaining_amount ? <span className="text-na-badge">(N/A – Full Payment)</span> : null}</label>
                 <input
                   type="date"
                   value={paymentNextDate}
                   onChange={(e) => setPaymentNextDate(e.target.value)}
                   disabled={Number(paymentAmount) >= payingFee.remaining_amount}
-                  style={{ opacity: Number(paymentAmount) >= payingFee.remaining_amount ? 0.4 : 1 }}
+                  className={Number(paymentAmount) >= payingFee.remaining_amount ? 'opacity-disabled' : 'opacity-normal'}
                   placeholder="Next installment due date"
                 />
               </div>
@@ -766,33 +716,33 @@ export default function FeesScreen() {
       {/* Report Modal */}
       {reportFee && (
         <div className="modal-overlay">
-          <div className="modal-content-custom" style={{ maxWidth: 600 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <div className="modal-content-custom modal-content-600">
+            <div className="modal-header-between">
               <h3>Fee Report: {reportFee.student_name}</h3>
               <div className="inline-actions">
                 <button className="btn btn-ghost" onClick={() => setReportFee(null)}>Close</button>
               </div>
             </div>
 
-            <div className="card" style={{ background: 'var(--surface-container-low)', marginBottom: 16 }}>
-              <div className="form-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', padding: 12 }}>
+            <div className="card card-surface-low">
+              <div className="form-grid form-grid-3col">
                 <div>
-                  <label className="muted" style={{ fontSize: 11 }}>Total Fees</label>
-                  <div style={{ fontWeight: 700 }}>₹{reportFee.total_amount}</div>
+                  <label className="muted modal-label-sm">Total Fees</label>
+                  <div className="text-bold-700">₹{reportFee.total_amount}</div>
                 </div>
                 <div>
-                  <label className="muted" style={{ fontSize: 11 }}>Total Paid</label>
-                  <div style={{ fontWeight: 700, color: 'var(--success)' }}>₹{reportFee.paid_amount}</div>
+                  <label className="muted modal-label-sm">Total Paid</label>
+                  <div className="text-bold-700-success">₹{reportFee.paid_amount}</div>
                 </div>
                 <div>
-                  <label className="muted" style={{ fontSize: 11 }}>Total Remaining</label>
-                  <div style={{ fontWeight: 700, color: 'var(--error)' }}>₹{reportFee.remaining_amount}</div>
+                  <label className="muted modal-label-sm">Total Remaining</label>
+                  <div className="text-bold-700-error">₹{reportFee.remaining_amount}</div>
                 </div>
               </div>
             </div>
 
             <h4>Payment History</h4>
-            <div className="table-responsive" style={{ maxHeight: 300, overflowY: 'auto' }}>
+            <div className="table-responsive table-max-300">
               <table className="data-table table mini-table">
                 <thead>
                   <tr>
@@ -809,27 +759,26 @@ export default function FeesScreen() {
                     payments.map(p => (
                       <tr key={p.id}>
                         <td>{formatDate(p.created_at)}</td>
-                        <td style={{ fontWeight: 600 }}>₹{p.amount}</td>
+                        <td className="student-name-cell">₹{p.amount}</td>
                         <td>{p.remark}</td>
                         <td>
                           <div className="row-actions">
                             <button className="icon-btn" onClick={() => printReceipt(p)} title="Print Receipt"><Printer size={14} /></button>
                             <button
-                              className="icon-btn"
+                              className="icon-btn text-success"
                               onClick={() => p.id && sendWhatsAppReceipt(p.id)}
                               disabled={sendingReceiptId === p.id}
-                              style={{ color: '#25D366' }}
                               title="Send WhatsApp Receipt"
                             >
                               <MessageCircle size={14} fill="#25D366" />
                             </button>
-                            <button className="icon-btn" onClick={() => {
+                            <button className="icon-btn text-primary-btn" onClick={() => {
                               setEditingPayment(p);
                               setEditAmount(p.amount.toString());
                               setEditRemark(p.remark);
                               setEditDate(p.created_at ? p.created_at.slice(0, 10) : '');
-                            }} title="Edit Payment" style={{ color: 'var(--primary)' }}><Edit2 size={14} /></button>
-                            <button className="icon-btn" onClick={() => p.id && handleDeletePayment(p.id)} title="Delete Payment" style={{ color: 'var(--error)' }}><Trash2 size={14} /></button>
+                            }} title="Edit Payment"><Edit2 size={14} /></button>
+                            <button className="icon-btn text-error-btn" onClick={() => p.id && handleDeletePayment(p.id)} title="Delete Payment"><Trash2 size={14} /></button>
                           </div>
                         </td>
                       </tr>
@@ -844,7 +793,7 @@ export default function FeesScreen() {
 
       {/* Edit Payment Modal */}
       {editingPayment && (
-        <div className="modal-overlay" style={{ zIndex: 1100 }}>
+        <div className="modal-overlay modal-overlay-z1100">
           <div className="modal-content-custom">
             <h3>Edit Payment</h3>
             <form onSubmit={handleUpdatePayment} className="form-grid">
@@ -886,8 +835,8 @@ export default function FeesScreen() {
       {isExportModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content-custom">
-            <h3 style={{ marginBottom: 16 }}>Export Fee Installments</h3>
-            <p className="muted" style={{ marginBottom: 20 }}>Select filters below to download specific fee payments.</p>
+            <h3 className="mb-16">Export Fee Installments</h3>
+            <p className="muted mb-20">Select filters below to download specific fee payments.</p>
             <div className="form-grid">
               <div>
                 <label>Start Date</label>
@@ -908,8 +857,8 @@ export default function FeesScreen() {
               </div>
               <div className="inline-actions form-actions span-2">
                 <button type="button" className="btn btn-ghost" onClick={() => setIsExportModalOpen(false)}>Cancel</button>
-                <button type="button" className="btn btn-ghost" onClick={() => { setExportStartDate(''); setExportEndDate(''); setExportStatus(''); }} style={{ color: 'var(--error)' }}>Clear</button>
-                <button type="button" className="btn btn-primary" onClick={executeExport} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <button type="button" className="btn btn-ghost text-error-btn" onClick={() => { setExportStartDate(''); setExportEndDate(''); setExportStatus(''); }}>Clear</button>
+                <button type="button" className="btn btn-primary filter-btn-primary" onClick={executeExport}>
                   <Download size={16} /> Download CSV
                 </button>
               </div>
@@ -921,8 +870,8 @@ export default function FeesScreen() {
       {/* Edit Next Payment Date Modal */}
       {editingDateAdmissionId !== null && (
         <div className="modal-overlay">
-          <div className="modal-content-custom" style={{ maxWidth: 350 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <div className="modal-content-custom modal-content-350">
+            <div className="modal-header-between">
               <h3>Update Next Payment Date</h3>
               <button className="btn btn-ghost" onClick={() => setEditingDateAdmissionId(null)}>Close</button>
             </div>
@@ -934,12 +883,12 @@ export default function FeesScreen() {
                   value={tempNextDate}
                   onChange={(e) => setTempNextDate(e.target.value)}
                   autoFocus
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--outline-variant)' }}
+                  className="date-input-full"
                 />
-                <p className="muted mt-2" style={{ fontSize: 12 }}>Leave blank to clear the date.</p>
+                <p className="muted mt-2 text-muted-xs">Leave blank to clear the date.</p>
               </div>
             </div>
-            <div className="inline-actions" style={{ justifyContent: 'flex-end', marginTop: 24 }}>
+            <div className="inline-actions justify-end mt-16">
               <button className="btn btn-ghost" onClick={() => setEditingDateAdmissionId(null)}>Cancel</button>
               <button className="btn btn-primary" onClick={() => {
                 api.updateFeeNextPaymentDate(editingDateAdmissionId, tempNextDate || null)
@@ -958,78 +907,50 @@ export default function FeesScreen() {
 
       {/* Single WhatsApp Reminder Confirmation Modal */}
       {singleConfirmFee && (
-        <div className="modal-overlay" style={{ zIndex: 1200 }}>
-          <div className="modal-content-custom" style={{ maxWidth: 440, textAlign: 'center', padding: '28px 24px' }}>
-            <div style={{
-              width: 60,
-              height: 60,
-              borderRadius: '50%',
-              backgroundColor: 'rgba(37, 211, 102, 0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 16px',
-              color: '#25D366'
-            }}>
+        <div className="modal-overlay modal-overlay-z1200">
+          <div className="modal-content-custom modal-content-440">
+            <div className="confirm-icon-circle">
               <MessageCircle size={32} fill="#25D366" color="#25D366" />
             </div>
 
-            <h3 style={{ fontSize: 20, marginBottom: 8 }}>Send WhatsApp Reminder?</h3>
-            <p className="muted" style={{ fontSize: 14, marginBottom: 20 }}>
+            <h3 className="modal-title-20">Send WhatsApp Reminder?</h3>
+            <p className="muted modal-desc-14">
               Are you sure you want to send a fee reminder message on WhatsApp to this student?
             </p>
 
-            <div style={{
-              backgroundColor: 'var(--surface-container-low)',
-              borderRadius: 12,
-              padding: '16px',
-              textAlign: 'left',
-              marginBottom: 24,
-              border: '1px solid var(--outline-variant)'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, fontSize: 13 }}>
+            <div className="confirm-info-box">
+              <div className="confirm-info-row">
                 <span className="muted">Student Name:</span>
                 <strong>{singleConfirmFee.student_name}</strong>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, fontSize: 13 }}>
+              <div className="confirm-info-row">
                 <span className="muted">Mobile Number:</span>
-                <strong style={{ color: '#25D366' }}>{singleConfirmFee.mobile}</strong>
+                <strong className="text-success">{singleConfirmFee.mobile}</strong>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, fontSize: 13 }}>
+              <div className="confirm-info-row">
                 <span className="muted">Remaining Fees:</span>
-                <strong style={{ color: 'var(--error)' }}>₹{singleConfirmFee.remaining_amount?.toFixed(2)}</strong>
+                <strong className="text-error-bold">₹{singleConfirmFee.remaining_amount?.toFixed(2)}</strong>
               </div>
               {singleConfirmFee.next_payment_date && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+                <div className="confirm-info-row-last">
                   <span className="muted">Next Payment Date:</span>
                   <strong>{formatDate(singleConfirmFee.next_payment_date)}</strong>
                 </div>
               )}
             </div>
 
-            <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+            <div className="confirm-actions-row">
               <button
                 type="button"
-                className="btn btn-ghost"
+                className="btn btn-ghost confirm-btn-cancel"
                 onClick={() => setSingleConfirmFee(null)}
-                style={{ flex: 1, height: 42, border: '1px solid var(--outline-variant)' }}
               >
                 Cancel
               </button>
               <button
                 type="button"
-                className="btn btn-primary"
+                className="btn btn-primary confirm-btn-submit"
                 onClick={handleConfirmSingleReminder}
-                style={{
-                  flex: 1,
-                  height: 42,
-                  backgroundColor: '#25D366',
-                  borderColor: '#128C7E',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 6
-                }}
               >
                 <Send size={16} /> Okay, Send
               </button>
@@ -1040,79 +961,48 @@ export default function FeesScreen() {
 
       {/* Bulk WhatsApp Reminders Confirmation Modal */}
       {isBulkConfirmOpen && (
-        <div className="modal-overlay" style={{ zIndex: 1200 }}>
-          <div className="modal-content-custom" style={{ maxWidth: 460, textAlign: 'center', padding: '28px 24px' }}>
-            <div style={{
-              width: 60,
-              height: 60,
-              borderRadius: '50%',
-              backgroundColor: 'rgba(37, 211, 102, 0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 16px',
-              color: '#25D366'
-            }}>
+        <div className="modal-overlay modal-overlay-z1200">
+          <div className="modal-content-custom modal-content-460">
+            <div className="confirm-icon-circle">
               <Send size={30} color="#25D366" />
             </div>
 
-            <h3 style={{ fontSize: 20, marginBottom: 8 }}>Send All Fee Reminders?</h3>
-            <p className="muted" style={{ fontSize: 14, marginBottom: 20 }}>
+            <h3 className="modal-title-20">Send All Fee Reminders?</h3>
+            <p className="muted modal-desc-14">
               Are you sure you want to send WhatsApp fee reminder messages to all students in the current view?
             </p>
 
-            <div style={{
-              backgroundColor: 'var(--surface-container-low)',
-              borderRadius: 12,
-              padding: '16px',
-              textAlign: 'left',
-              marginBottom: 24,
-              border: '1px solid var(--outline-variant)'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, fontSize: 13 }}>
+            <div className="confirm-info-box">
+              <div className="confirm-info-row">
                 <span className="muted">Total Recipients:</span>
-                <strong style={{ color: '#25D366', fontSize: 15 }}>
+                <strong className="text-success-15">
                   {filteredFees.filter(f => f.mobile && f.status !== 'Deleted').length} Student
                 </strong>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, fontSize: 13 }}>
+              <div className="confirm-info-row">
                 <span className="muted">Current Status Filter:</span>
                 <strong>{statusFilter || 'All Status (Pending, Half Complete & Complete)'}</strong>
               </div>
               {query && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, fontSize: 13 }}>
+                <div className="confirm-info-row">
                   <span className="muted">Search Filter:</span>
                   <strong>"{query}"</strong>
                 </div>
               )}
-              {/* <div style={{ fontSize: 12, color: 'var(--outline)', marginTop: 8, borderTop: '1px dashed var(--outline-variant)', paddingTop: 8 }}>
-                ℹ️ Messages will be sent to all {filteredFees.filter(f => f.mobile && f.status !== 'Deleted').length} student(s) with valid mobile numbers matching your current filter.
-              </div> */}
             </div>
 
-            <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+            <div className="confirm-actions-row">
               <button
                 type="button"
-                className="btn btn-ghost"
+                className="btn btn-ghost confirm-btn-cancel"
                 onClick={() => setIsBulkConfirmOpen(false)}
-                style={{ flex: 1, height: 42, border: '1px solid var(--outline-variant)' }}
               >
                 Cancel
               </button>
               <button
                 type="button"
-                className="btn btn-primary"
+                className="btn btn-primary confirm-btn-submit"
                 onClick={handleConfirmBulkReminders}
-                style={{
-                  flex: 1,
-                  height: 42,
-                  backgroundColor: '#25D366',
-                  borderColor: '#128C7E',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 6
-                }}
               >
                 <Send size={16} /> Okay, Send All
               </button>

@@ -256,66 +256,47 @@ export default function CoursesScreen() {
 
   return (
     <section className="screen">
-      <header className="topbar" style={{
-        position: 'sticky',
-        top: '-48px',
-        zIndex: 100,
-        background: 'var(--background)',
-        padding: '12px 0',
-        margin: '-48px 0 0 0',
-        borderBottom: '1px solid var(--outline-variant)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '16px',
-        minHeight: '80px',
-        width: 'calc(100% + 40px)',
-        marginLeft: '-20px',
-        paddingLeft: '20px',
-        paddingRight: '20px'
-      }}>
-        <div style={{ whiteSpace: 'nowrap' }}>
-          <h2 style={{ fontSize: '28px' }}>{showDeleted ? 'Deleted Courses' : 'Course Portfolio'}</h2>
+      <header className="topbar topbar-sticky">
+        <div className="text-nowrap">
+          <h2 className="topbar-title-text">{showDeleted ? 'Deleted Courses' : 'Course Portfolio'}</h2>
         </div>
-        <div className="topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'nowrap' }}>
+        <div className="topbar-actions">
           <label className="searchbox">
             <Search size={16} />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search..." style={{ width: 140 }} />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search..." className="search-input-sm" />
           </label>
 
           <button
             className={`btn px-2 py-1 text-sm ${showDeleted ? 'btn-primary' : 'btn-ghost'}`}
             onClick={() => setShowDeleted(!showDeleted)}
-            style={{ height: '40px', minWidth: '40px', border: showDeleted ? 'none' : '1px solid var(--outline-variant)' }}
             title="Toggle Deleted Records"
           >
             <Trash2 size={20} />
           </button>
           {!showDeleted && (
-            <button className="btn btn-primary" onClick={openCreateForm} style={{ height: '40px' }}>
+            <button className="btn btn-primary" onClick={openCreateForm}>
               <Plus size={16} /> Add
             </button>
           )}
         </div>
       </header>
 
-
       {error && (
-        <div className="card" style={{ padding: 14, borderColor: 'color-mix(in srgb, var(--error) 25%, var(--surface-container-high))' }}>
-          <strong style={{ color: 'var(--error)' }}>{error}</strong>
+        <div className="card crm-alert-card alert-error">
+          <strong>{error}</strong>
         </div>
       )}
 
       {success && (
-        <div className="card" style={{ padding: 14, borderColor: 'rgba(16,185,129,0.35)' }}>
-          <strong style={{ color: '#047857' }}>{success}</strong>
+        <div className="card crm-alert-card alert-success">
+          <strong>{success}</strong>
         </div>
       )}
 
       {isFormOpen && (
         <div className="modal-overlay">
           <div className="modal-content-custom">
-            <h3 style={{ marginBottom: 16 }}>{editingId ? 'Update Course' : 'Add Course'}</h3>
+            <h3 className="mb-3">{editingId ? 'Update Course' : 'Add Course'}</h3>
             <form className="form-grid" onSubmit={saveCourse}>
               <div>
                 <label>Course Name</label>
@@ -323,7 +304,7 @@ export default function CoursesScreen() {
               </div>
               <div>
                 <label>Duration</label>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div className="d-flex gap-2">
                   <input type="number" value={durationNumber} onChange={(e) => setDurationNumber(e.target.value)} required placeholder="e.g. 6" />
                   <select value={durationUnit} onChange={(e) => setDurationUnit(e.target.value)}>
                     <option value="Months">Months</option>
@@ -351,15 +332,14 @@ export default function CoursesScreen() {
       {viewCourse && (
         <div className="modal-overlay">
           <div className="modal-content-custom">
-            <h3 style={{ marginBottom: 16 }}>Course Details</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {/* <div><strong>Course Code:</strong> {viewCourse.course_code ?? 'N/A'}</div> */}
+            <h3 className="mb-3">Course Details</h3>
+            <div className="d-flex flex-column gap-2">
               <div><strong>Name:</strong> {viewCourse.name}</div>
               <div><strong>Duration:</strong> {viewCourse.duration}</div>
               <div><strong>Fees:</strong> {viewCourse.fees}</div>
               <div><strong>Details:</strong> {viewCourse.details}</div>
             </div>
-            <div className="inline-actions form-actions" style={{ marginTop: 16, justifyContent: 'flex-end' }}>
+            <div className="inline-actions form-actions mt-3 justify-content-end">
               <button type="button" className="btn btn-ghost" onClick={() => setViewCourse(null)}>Close</button>
             </div>
           </div>
@@ -368,21 +348,20 @@ export default function CoursesScreen() {
 
       <div className="card">
         <div className="card-header-row">
-          <h3 style={{ margin: 0 }}>{showDeleted ? 'Deleted Academic Programs' : 'All Academic Programs'}</h3>
+          <h3 className="m-0">{showDeleted ? 'Deleted Academic Programs' : 'All Academic Programs'}</h3>
           <div className="inline-actions">
             {showDeleted && (
               <button
-                className="btn btn-ghost"
+                className="btn btn-ghost filter-btn-ghost"
                 onClick={() => setShowDeleted(false)}
-                style={{ padding: '0 12px', height: '36px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', border: '1px solid var(--outline-variant)' }}
               >
-                <RotateCcw size={14} style={{ transform: 'rotate(-90deg)' }} />
+                <RotateCcw size={14} className="rotate-icon-back" />
                 Back
               </button>
             )}
             {!showDeleted && (
               <>
-                <input ref={fileInputRef} type="file" accept=".csv" style={{ display: 'none' }} onChange={importCsv} />
+                <input ref={fileInputRef} type="file" accept=".csv" className="d-none" onChange={importCsv} />
                 <button className="btn btn-ghost" onClick={() => fileInputRef.current?.click()}><FileUp size={14} />Import CSV</button>
                 <button className="btn btn-ghost" onClick={exportCsv}><Download size={14} />Export CSV</button>
               </>
@@ -418,8 +397,8 @@ export default function CoursesScreen() {
                         {!showDeleted && <button className="icon-btn" onClick={() => openEditForm(row)} title="Edit"><Pencil size={14} /></button>}
                         {showDeleted ? (
                           <>
-                            <button className="icon-btn" onClick={() => restoreCourse(row)} title="Restore" style={{ color: 'var(--primary)' }}><RotateCcw size={14} /></button>
-                            <button className="icon-btn" onClick={() => void deleteCourse(row.id)} title="Permanent Delete" style={{ color: 'var(--error)' }}><Trash2 size={14} /></button>
+                            <button className="icon-btn text-primary" onClick={() => restoreCourse(row)} title="Restore"><RotateCcw size={14} /></button>
+                            <button className="icon-btn text-danger" onClick={() => void deleteCourse(row.id)} title="Permanent Delete"><Trash2 size={14} /></button>
                           </>
                         ) : (
                           <button className="icon-btn" onClick={() => softDeleteCourse(row)} title="Move to Deleted"><Trash2 size={14} /></button>

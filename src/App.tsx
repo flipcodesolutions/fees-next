@@ -66,11 +66,10 @@ function AppContent() {
     <div className="container-fluid p-0">
       <div className="d-flex">
         <div
-          className="offcanvas-md offcanvas-start border-end"
+          className="offcanvas-md offcanvas-start border-end app-offcanvas-sidebar"
           tabIndex={-1}
           id="sidebarMenu"
           aria-labelledby="sidebarMenuLabel"
-          style={{ width: '280px', backgroundColor: '#ffffff' }}
         >
           <div className="offcanvas-header d-md-none">
             <h5 className="offcanvas-title" id="sidebarMenuLabel">Menu</h5>
@@ -89,9 +88,8 @@ function AppContent() {
           </div>
         </div>
 
-
-        <main className="flex-grow-1 w-100 overflow-hidden p-3 p-md-4 p-lg-5" style={{ minHeight: '100vh', position: 'relative' }}>
-          <div className="d-md-none d-flex align-items-center justify-content-between gap-3 mobile-topbar" style={{ padding: '10px 15px', background: '#fff', borderBottom: '1px solid #eee', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}>
+        <main className="flex-grow-1 w-100 overflow-hidden p-3 p-md-4 p-lg-5 app-main-content">
+          <div className="d-md-none d-flex align-items-center justify-content-between gap-3 mobile-topbar app-mobile-nav">
             <div className="d-flex align-items-center gap-3">
               <button
                 className="btn btn-light border shadow-sm"
@@ -109,7 +107,7 @@ function AppContent() {
             </button>
           </div>
 
-          <div className="d-md-none" style={{ height: '80px' }}></div>
+          <div className="d-md-none app-mobile-nav-spacer"></div>
 
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />

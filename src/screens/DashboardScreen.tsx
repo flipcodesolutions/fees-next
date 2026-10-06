@@ -37,50 +37,39 @@ interface StatCardProps {
   trend?: string;
 }
 
+function getThemeClass(color: string) {
+  if (color.includes('3b82f6') || color.includes('blue')) return 'theme-blue';
+  if (color.includes('10b981') || color.includes('green')) return 'theme-green';
+  if (color.includes('f59e0b') || color.includes('amber')) return 'theme-amber';
+  if (color.includes('8b5cf6') || color.includes('purple')) return 'theme-purple';
+  if (color.includes('ec4899') || color.includes('pink')) return 'theme-pink';
+  if (color.includes('ef4444') || color.includes('red')) return 'theme-red';
+  return 'theme-blue';
+}
+
 const StatCard = ({ title, value, icon, color, onClick, subtitle, trend }: StatCardProps) => (
-  <div
-    className="card dashboard-card"
-    onClick={onClick}
-    style={{
-      cursor: 'pointer',
-      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-      border: '1px solid var(--outline-variant)',
-      overflow: 'hidden',
-      position: 'relative'
-    }}
-  >
+  <div className={`card dashboard-card ${getThemeClass(color)}`} onClick={onClick}>
     <div className="card-body p-4">
       <div className="d-flex align-items-center justify-content-between mb-3">
-        <div
-          style={{
-            width: '48px',
-            height: '48px',
-            borderRadius: '12px',
-            backgroundColor: `${color}15`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: color
-          }}
-        >
+        <div className="dashboard-stat-icon-wrap">
           {icon}
         </div>
-        <div className="d-flex align-items-center gap-1" style={{ color: 'var(--success)', fontSize: '14px', fontWeight: 600 }}>
+        <div className="d-flex align-items-center gap-1 dashboard-stat-trend">
           {trend && <><ArrowUpRight size={16} /> {trend}</>}
         </div>
       </div>
 
       <div>
-        <h3 className="muted mb-1" style={{ fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <h3 className="dashboard-stat-title">
           {title}
         </h3>
         <div className="d-flex align-items-baseline gap-2">
-          <span style={{ fontSize: '32px', fontWeight: 700, color: 'var(--on-surface)' }}>
+          <span className="dashboard-stat-value">
             {value}
           </span>
         </div>
         {subtitle && (
-          <p className="muted mt-2 mb-0" style={{ fontSize: '13px' }}>
+          <p className="muted mt-2 mb-0 dashboard-stat-subtitle">
             {subtitle}
           </p>
         )}
@@ -88,16 +77,7 @@ const StatCard = ({ title, value, icon, color, onClick, subtitle, trend }: StatC
     </div>
 
     {/* Subtle gradient background element */}
-    <div style={{
-      position: 'absolute',
-      top: '-20px',
-      right: '-20px',
-      width: '100px',
-      height: '100px',
-      borderRadius: '50%',
-      background: `radial-gradient(circle, ${color}10 0%, transparent 70%)`,
-      zIndex: 0
-    }} />
+    <div className="dashboard-stat-glow" />
   </div>
 );
 
@@ -110,54 +90,21 @@ interface StatusCardProps {
 }
 
 const StatusCard = ({ title, icon, color, onClick, subtitle }: StatusCardProps) => (
-  <div
-    className="card dashboard-card"
-    onClick={onClick}
-    style={{
-      cursor: 'pointer',
-      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-      border: '1px solid var(--outline-variant)',
-      overflow: 'hidden',
-      position: 'relative',
-      height: '100%'
-    }}
-  >
+  <div className={`card dashboard-card h-100 ${getThemeClass(color)}`} onClick={onClick}>
     <div className="card-body p-4 d-flex align-items-center gap-3">
-      <div
-        style={{
-          width: '48px',
-          height: '48px',
-          borderRadius: '12px',
-          backgroundColor: `${color}15`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: color,
-          flexShrink: 0
-        }}
-      >
+      <div className="dashboard-stat-icon-wrap flex-shrink-0">
         {icon}
       </div>
       <div>
-        <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--on-surface)', marginBottom: '4px' }}>
+        <h3 className="dashboard-status-title">
           {title}
         </h3>
-        <p className="muted mb-0" style={{ fontSize: '13px' }}>
+        <p className="muted mb-0 dashboard-stat-subtitle">
           {subtitle}
         </p>
       </div>
     </div>
-    {/* Subtle gradient background element */}
-    <div style={{
-      position: 'absolute',
-      top: '-20px',
-      right: '-20px',
-      width: '100px',
-      height: '100px',
-      borderRadius: '50%',
-      background: `radial-gradient(circle, ${color}10 0%, transparent 70%)`,
-      zIndex: 0
-    }} />
+    <div className="dashboard-stat-glow" />
   </div>
 );
 
@@ -247,7 +194,7 @@ export default function DashboardScreen() {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
+      <div className="dashboard-loading-wrap">
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -258,7 +205,7 @@ export default function DashboardScreen() {
   return (
     <div className="dashboard-screen p-0 p-md-2">
       <header className="mb-4">
-        <h2 style={{ fontSize: '32px', fontWeight: 800, color: 'var(--on-surface)' }}>Dashboard</h2>
+        <h2 className="dashboard-page-title">Dashboard</h2>
         <p className="muted">Welcome back! Here's what's happening today.</p>
       </header>
 
@@ -372,25 +319,25 @@ export default function DashboardScreen() {
 
       <div className="row mt-4 g-4">
         <div className="col-12">
-          <div className="card" style={{ border: '1px solid var(--outline-variant)', borderRadius: '16px' }}>
+          <div className="card dashboard-insights-card">
             <div className="card-body p-4">
               <div className="d-flex align-items-center justify-content-between mb-4">
-                <h3 style={{ fontSize: '20px', fontWeight: 700 }}>Quick Insights</h3>
+                <h3 className="dashboard-insights-title">Quick Insights</h3>
                 <TrendingUp size={20} className="muted" />
               </div>
               <div className="row g-4 text-center">
                 <div className="col-4">
                   <div className="p-3">
-                    <h4 className="muted mb-1" style={{ fontSize: '13px' }}>Conversion Rate</h4>
-                    <p style={{ fontSize: '24px', fontWeight: 700 }}>
+                    <h4 className="muted mb-1 insight-metric-label">Conversion Rate</h4>
+                    <p className="insight-metric-val">
                       {stats.inquiries > 0 ? ((stats.admissions / stats.inquiries) * 100).toFixed(1) : 0}%
                     </p>
                   </div>
                 </div>
-                <div className="col-4" style={{ borderLeft: '1px solid var(--outline-variant)', borderRight: '1px solid var(--outline-variant)' }}>
+                <div className="col-4 insight-col-bordered">
                   <div className="p-3">
-                    <h4 className="muted mb-1" style={{ fontSize: '13px' }}>Collection %</h4>
-                    <p style={{ fontSize: '24px', fontWeight: 700 }}>
+                    <h4 className="muted mb-1 insight-metric-label">Collection %</h4>
+                    <p className="insight-metric-val">
                       {stats.totalReceived + stats.totalRemaining > 0
                         ? ((stats.totalReceived / (stats.totalReceived + stats.totalRemaining)) * 100).toFixed(1)
                         : 0}%
@@ -399,8 +346,8 @@ export default function DashboardScreen() {
                 </div>
                 <div className="col-4">
                   <div className="p-3">
-                    <h4 className="muted mb-1" style={{ fontSize: '13px' }}>Doc Submitted %</h4>
-                    <p style={{ fontSize: '24px', fontWeight: 700 }}>
+                    <h4 className="muted mb-1 insight-metric-label">Doc Submitted %</h4>
+                    <p className="insight-metric-val">
                       {stats.admissions > 0 ? (((stats.admissions - stats.docPending) / stats.admissions) * 100).toFixed(1) : 0}%
                     </p>
                   </div>
@@ -410,21 +357,6 @@ export default function DashboardScreen() {
           </div>
         </div>
       </div>
-
-      <style>{`
-        .dashboard-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 12px 24px -10px rgba(0,0,0,0.1);
-          border-color: var(--primary) !important;
-        }
-        .dashboard-screen {
-          animation: fadeIn 0.5s ease-out;
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }

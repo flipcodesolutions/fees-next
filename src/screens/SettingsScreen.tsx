@@ -2,6 +2,7 @@ import { Save, Eye, EyeOff, Edit3, X, MessageSquare } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import { useToast } from '../components/Toast';
+import Loader from '../components/Loader';
 
 interface SettingsFormData {
   whatsapp_token: string;
@@ -11,9 +12,6 @@ interface SettingsFormData {
   whatsapp_template_name: string;
 }
 
-/**
- * SettingsScreen manages WhatsApp Business API configurations with a clean, modern UI.
- */
 export default function SettingsScreen() {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
@@ -37,9 +35,6 @@ export default function SettingsScreen() {
     whatsapp_template_name: '',
   });
 
-  /**
-   * Load configurations from the settings table.
-   */
   const loadSettings = async () => {
     setLoading(true);
     try {
@@ -54,7 +49,7 @@ export default function SettingsScreen() {
       };
       setFormData(fields);
       setOriginalData(fields);
-    } catch (error) {
+    } catch {
       toast.error('Failed to load settings from database');
     } finally {
       setLoading(false);
@@ -65,17 +60,11 @@ export default function SettingsScreen() {
     void loadSettings();
   }, []);
 
-  /**
-   * Revert changes and exit edit mode.
-   */
   const handleCancel = () => {
     setFormData(originalData);
     setIsEditing(false);
   };
 
-  /**
-   * Validate and update configuration records.
-   */
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -97,7 +86,7 @@ export default function SettingsScreen() {
         toast.success('WhatsApp configurations cleared!');
         await loadSettings();
         setIsEditing(false);
-      } catch (error) {
+      } catch {
         toast.error('Failed to clear settings');
       } finally {
         setSaving(false);
@@ -106,34 +95,27 @@ export default function SettingsScreen() {
     }
 
     if (!token) {
-      toast.error('WhatsApp API Key is required');
+      toast.error('WhatsApp API Token is required');
       return;
     }
     if (!phoneId) {
       toast.error('WhatsApp Phone Number ID is required');
       return;
     }
-    if (!/^\d+$/.test(phoneId)) {
-      toast.error('WhatsApp Phone Number ID must contain only digits');
-      return;
-    }
 
     setSaving(true);
     try {
-      const payload: SettingsFormData = {
+      await api.updateSettings({
         whatsapp_token: token,
         whatsapp_phone_number_id: phoneId,
         whatsapp_business_account_id: businessId,
-        whatsapp_api_url: apiUrl || 'https://partnersv1.pinbot.ai/v3',
-        whatsapp_template_name: templateName || 'fees_reminder',
-      };
-
-      await api.updateSettings(payload as unknown as Record<string, string>);
-      toast.success('Settings updated successfully!');
-      setOriginalData(payload);
-      setFormData(payload);
+        whatsapp_api_url: apiUrl,
+        whatsapp_template_name: templateName,
+      });
+      toast.success('WhatsApp configurations saved successfully!');
+      await loadSettings();
       setIsEditing(false);
-    } catch (error) {
+    } catch {
       toast.error('Failed to save settings');
     } finally {
       setSaving(false);
@@ -141,50 +123,22 @@ export default function SettingsScreen() {
   };
 
   return (
-    <section className="screen settings-screen" style={{ width: '100%', margin: 0, padding: 0 }}>
-      <header className="topbar" style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '28px', fontWeight: 700, color: '#0f172a' }}>Settings</h2>
+    <section className="screen settings-screen">
+      <header className="topbar">
+        <h2>Settings</h2>
       </header>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748b' }}>
-          <div className="spinner-border text-primary" role="status" style={{ width: '2rem', height: '2rem', marginBottom: '12px' }}></div>
-          <div>Loading settings...</div>
-        </div>
+        <Loader text="Loading settings..." />
       ) : (
-        <div
-          className="card"
-          style={{
-            backgroundColor: '#ffffff',
-            borderRadius: '16px',
-            border: '1px solid #e2e8f0',
-            boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
-            padding: '28px',
-            maxWidth: '820px',
-            width: '100%',
-            margin: '0'
-          }}
-        >
-          {/* Header Block */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '28px', paddingBottom: '20px', borderBottom: '1px solid #f1f5f9' }}>
-            <div
-              style={{
-                width: '46px',
-                height: '46px',
-                borderRadius: '12px',
-                backgroundColor: 'rgba(37, 211, 102, 0.12)',
-                color: '#25D366',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0
-              }}
-            >
+        <div className="card settings-main-card">
+          <div className="settings-header-block">
+            <div className="settings-header-icon">
               <MessageSquare size={24} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '22px', fontWeight: 700, color: '#0f172a' }}>WhatsApp</h3>
-              <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#64748b' }}>
+              <h3 className="settings-title">WhatsApp</h3>
+              <p className="settings-desc">
                 Configure WhatsApp Business API credentials and reminder templates.
               </p>
             </div>
@@ -192,25 +146,14 @@ export default function SettingsScreen() {
 
           <form onSubmit={handleSave}>
             {/* Field 1: WhatsApp API Key / Access Token */}
-            <div style={{ marginBottom: '22px' }}>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#334155', marginBottom: '8px' }}>
+            <div className="settings-field-group">
+              <label className="settings-label">
                 WhatsApp API Key / Access Token
               </label>
-              <div style={{ position: 'relative' }}>
+              <div className="settings-input-wrapper">
                 <input
                   type={showToken ? 'text' : 'password'}
-                  className="form-control"
-                  style={{
-                    height: '46px',
-                    borderRadius: '10px',
-                    border: '1px solid #cbd5e1',
-                    paddingRight: '48px',
-                    paddingLeft: '14px',
-                    fontSize: '14px',
-                    backgroundColor: isEditing ? '#ffffff' : '#f8fafc',
-                    color: '#1e293b',
-                    fontWeight: 500
-                  }}
+                  className={`form-control settings-input-control settings-input-token ${isEditing ? 'editable' : 'readonly'}`}
                   value={formData.whatsapp_token}
                   onChange={(e) => setFormData({ ...formData, whatsapp_token: e.target.value })}
                   placeholder="Enter API Key / Token"
@@ -219,20 +162,7 @@ export default function SettingsScreen() {
                 <button
                   type="button"
                   onClick={() => setShowToken(!showToken)}
-                  style={{
-                    position: 'absolute',
-                    right: '12px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    background: 'none',
-                    border: 'none',
-                    color: '#64748b',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '4px'
-                  }}
+                  className="settings-token-toggle"
                   title={showToken ? 'Hide token' : 'Show token'}
                 >
                   {showToken ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -240,25 +170,15 @@ export default function SettingsScreen() {
               </div>
             </div>
 
-            {/* Row 2: Phone Number ID + Username */}
-            <div className="row" style={{ marginBottom: '22px' }}>
+            {/* Row 2: Phone Number ID + Business Account ID */}
+            <div className="row settings-field-group">
               <div className="col-md-6 mb-3 mb-md-0">
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#334155', marginBottom: '8px' }}>
+                <label className="settings-label">
                   WhatsApp Phone Number ID
                 </label>
                 <input
                   type="text"
-                  className="form-control"
-                  style={{
-                    height: '46px',
-                    borderRadius: '10px',
-                    border: '1px solid #cbd5e1',
-                    padding: '10px 14px',
-                    fontSize: '14px',
-                    backgroundColor: isEditing ? '#ffffff' : '#f8fafc',
-                    color: '#1e293b',
-                    fontWeight: 500
-                  }}
+                  className={`form-control settings-input-control ${isEditing ? 'editable' : 'readonly'}`}
                   value={formData.whatsapp_phone_number_id}
                   onChange={(e) => setFormData({ ...formData, whatsapp_phone_number_id: e.target.value })}
                   placeholder="e.g. 1255775757621766"
@@ -267,22 +187,12 @@ export default function SettingsScreen() {
               </div>
 
               <div className="col-md-6">
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#334155', marginBottom: '8px' }}>
+                <label className="settings-label">
                   Username / Business Account ID
                 </label>
                 <input
                   type="text"
-                  className="form-control"
-                  style={{
-                    height: '46px',
-                    borderRadius: '10px',
-                    border: '1px solid #cbd5e1',
-                    padding: '10px 14px',
-                    fontSize: '14px',
-                    backgroundColor: isEditing ? '#ffffff' : '#f8fafc',
-                    color: '#1e293b',
-                    fontWeight: 500
-                  }}
+                  className={`form-control settings-input-control ${isEditing ? 'editable' : 'readonly'}`}
                   value={formData.whatsapp_business_account_id}
                   onChange={(e) => setFormData({ ...formData, whatsapp_business_account_id: e.target.value })}
                   placeholder="e.g. ShivComputersSurendranagar0549Wapp"
@@ -292,24 +202,14 @@ export default function SettingsScreen() {
             </div>
 
             {/* Row 3: API Endpoint + Template Name */}
-            <div className="row" style={{ marginBottom: '28px' }}>
+            <div className="row settings-field-group">
               <div className="col-md-6 mb-3 mb-md-0">
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#334155', marginBottom: '8px' }}>
+                <label className="settings-label">
                   API Base Endpoint URL
                 </label>
                 <input
                   type="text"
-                  className="form-control"
-                  style={{
-                    height: '46px',
-                    borderRadius: '10px',
-                    border: '1px solid #cbd5e1',
-                    padding: '10px 14px',
-                    fontSize: '14px',
-                    backgroundColor: isEditing ? '#ffffff' : '#f8fafc',
-                    color: '#1e293b',
-                    fontWeight: 500
-                  }}
+                  className={`form-control settings-input-control ${isEditing ? 'editable' : 'readonly'}`}
                   value={formData.whatsapp_api_url}
                   onChange={(e) => setFormData({ ...formData, whatsapp_api_url: e.target.value })}
                   placeholder="https://partnersv1.pinbot.ai/v3"
@@ -318,22 +218,12 @@ export default function SettingsScreen() {
               </div>
 
               <div className="col-md-6">
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#334155', marginBottom: '8px' }}>
+                <label className="settings-label">
                   Fee Reminder Template Name
                 </label>
                 <input
                   type="text"
-                  className="form-control"
-                  style={{
-                    height: '46px',
-                    borderRadius: '10px',
-                    border: '1px solid #cbd5e1',
-                    padding: '10px 14px',
-                    fontSize: '14px',
-                    backgroundColor: isEditing ? '#ffffff' : '#f8fafc',
-                    color: '#1e293b',
-                    fontWeight: 500
-                  }}
+                  className={`form-control settings-input-control ${isEditing ? 'editable' : 'readonly'}`}
                   value={formData.whatsapp_template_name}
                   onChange={(e) => setFormData({ ...formData, whatsapp_template_name: e.target.value })}
                   placeholder="fees_reminder"
@@ -343,24 +233,13 @@ export default function SettingsScreen() {
             </div>
 
             {/* Action Buttons */}
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid #f1f5f9', paddingTop: '22px' }}>
+            <div className="settings-actions-footer">
               {!isEditing ? (
                 <button
                   type="button"
-                  className="btn btn-primary"
+                  className="btn btn-primary settings-btn settings-btn-primary"
                   onClick={() => setIsEditing(true)}
                   disabled={loading}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    height: '44px',
-                    padding: '0 24px',
-                    borderRadius: '10px',
-                    fontWeight: 600,
-                    fontSize: '14px',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)'
-                  }}
                 >
                   <Edit3 size={16} />
                   Edit Configurations
@@ -369,19 +248,9 @@ export default function SettingsScreen() {
                 <>
                   <button
                     type="button"
-                    className="btn btn-outline-secondary"
+                    className="btn btn-outline-secondary settings-btn"
                     onClick={handleCancel}
                     disabled={saving}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      height: '44px',
-                      padding: '0 20px',
-                      borderRadius: '10px',
-                      fontWeight: 600,
-                      fontSize: '14px'
-                    }}
                   >
                     <X size={16} />
                     Cancel
@@ -389,19 +258,8 @@ export default function SettingsScreen() {
 
                   <button
                     type="submit"
-                    className="btn btn-primary"
+                    className="btn btn-primary settings-btn settings-btn-primary"
                     disabled={saving}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      height: '44px',
-                      padding: '0 24px',
-                      borderRadius: '10px',
-                      fontWeight: 600,
-                      fontSize: '14px',
-                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)'
-                    }}
                   >
                     <Save size={16} />
                     {saving ? 'Saving...' : 'Save Settings'}

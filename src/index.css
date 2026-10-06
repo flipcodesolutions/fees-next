@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap');
+@import './styles/components.css';
+@import './styles/screens.css';
 
 :root {
   --surface: #f8f9ff;
@@ -772,9 +774,12 @@ p {
     position: fixed !important;
     top: 0;
     left: 0;
+    width: 280px !important;
+    max-width: 280px !important;
     height: 100vh;
     overflow-y: auto;
     z-index: 1040;
+    background-color: #ffffff !important;
   }
 
   main {

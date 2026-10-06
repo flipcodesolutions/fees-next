@@ -27,13 +27,13 @@ const navItems: { key: SectionKey; label: string; icon: any; path: string }[] = 
 
 export default function DashboardSidebar({ onAdmissionClick, onLogout }: DashboardSidebarProps) {
   return (
-    <aside className="dashboard-sidebar" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <aside className="dashboard-sidebar">
       <div className="brand-block">
         <img src={logo} alt="Logo" className="sidebar-logo" />
-        <h1 style={{ display: 'none' }}>FEES-CRM</h1>
-        <p style={{ display: 'none' }}>Student Success Platform</p>
+        <h1 className="sidebar-brand-title">FEES-CRM</h1>
+        <p className="sidebar-brand-subtitle">Student Success Platform</p>
       </div>
-      <nav style={{ flex: 1 }}>
+      <nav>
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -45,7 +45,6 @@ export default function DashboardSidebar({ onAdmissionClick, onLogout }: Dashboa
                 if (item.key === 'admission' && onAdmissionClick) {
                   onAdmissionClick();
                 }
-                // Optionally close offcanvas on mobile when clicking a link
                 const offcanvasEl = document.getElementById('sidebarMenu');
                 if (offcanvasEl && window.innerWidth < 768) {
                   const closeBtn = offcanvasEl.querySelector('.btn-close') as HTMLElement;
@@ -60,26 +59,8 @@ export default function DashboardSidebar({ onAdmissionClick, onLogout }: Dashboa
         })}
       </nav>
       {onLogout && (
-        <div style={{ padding: '1rem', borderTop: '1px solid rgba(0,0,0,0.1)' }}>
-          <button
-            onClick={onLogout}
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              padding: '0.75rem 1rem',
-              borderRadius: '0.5rem',
-              border: 'none',
-              background: 'rgba(239, 68, 68, 0.1)',
-              color: '#ef4444',
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'background 0.2s'
-            }}
-            onMouseOver={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'}
-            onMouseOut={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'}
-          >
+        <div className="sidebar-logout-container">
+          <button onClick={onLogout} className="sidebar-logout-btn">
             <LogOut size={18} />
             <span>Logout</span>
           </button>

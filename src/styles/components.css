@@ -1,0 +1,375 @@
+/* ============================================================
+   FEES-CRM - COMPONENTS DESIGN SYSTEM
+   Clean, externalized, modern CSS for reusable components
+   ============================================================ */
+
+/* --- Keyframe Animations --- */
+@keyframes crm-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes crm-slide-down {
+  from {
+    transform: translate(-50%, -100%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes crm-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes crm-slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* --- Loader Component --- */
+.crm-loader-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.crm-loader-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top: 3px solid var(--primary, #3b82f6);
+  border-radius: 50%;
+  animation: crm-spin 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.crm-loader-text {
+  color: var(--on-surface-variant, #64748b);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.crm-loader-fullscreen {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Toast Notification Component --- */
+.crm-toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.crm-toast-item {
+  pointer-events: auto;
+  min-width: 320px;
+  max-width: 460px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: crm-slide-in-right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s ease;
+}
+
+.crm-toast-item.type-success {
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #14532d;
+}
+
+.crm-toast-item.type-error {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+  color: #7f1d1d;
+}
+
+.crm-toast-item.type-info {
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e3a8a;
+}
+
+.crm-toast-item.type-warning {
+  background-color: #fffbeb;
+  border-color: #fef3c7;
+  color: #78350f;
+}
+
+.crm-toast-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.crm-toast-message {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.crm-toast-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.crm-toast-close:hover {
+  color: #334155;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* --- Pagination Component --- */
+.crm-pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+}
+
+.crm-pagination-info {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  letter-spacing: 0.02em;
+}
+
+/* --- Sidebar Extra Styles --- */
+.dashboard-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.dashboard-sidebar nav {
+  flex: 1;
+}
+
+.sidebar-brand-title,
+.sidebar-brand-subtitle {
+  display: none;
+}
+
+.sidebar-logout-container {
+  padding: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sidebar-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+
+/* --- App Layout Elements --- */
+#sidebarMenu,
+.app-offcanvas-sidebar {
+  width: 280px !important;
+  max-width: 280px !important;
+  background-color: #ffffff !important;
+}
+
+.app-main-content {
+  min-height: 100vh;
+  position: relative;
+}
+
+.app-mobile-nav {
+  padding: 10px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.app-mobile-nav-spacer {
+  height: 70px;
+}
+
+/* --- Shared Sticky Screen Header --- */
+.rotate-icon-back {
+  transform: rotate(-90deg);
+}
+
+.topbar-sticky {
+  position: sticky;
+  top: -48px;
+  z-index: 100;
+  background: var(--background);
+  padding: 14px 20px;
+  margin: -48px 0 0 0;
+  border-bottom: 1px solid var(--outline-variant);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-height: 80px;
+  width: calc(100% + 40px);
+  margin-left: -20px;
+}
+
+.topbar-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-title-text {
+  font-size: 28px;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.topbar-date-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-container-lowest);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--outline-variant);
+}
+
+.topbar-date-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  color: var(--on-surface);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* --- Floating Status Banner & Alert Cards --- */
+.crm-floating-banner {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1050;
+  background: #10b981;
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  animation: crm-slide-down 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.crm-alert-card {
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.crm-alert-card.alert-error {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: var(--error);
+}
+
+.crm-alert-card.alert-success {
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  color: #15803d;
+}
+
+.crm-alert-card.alert-info {
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: #1d4ed8;
+}
+
+/* --- Standard Modal Components --- */
+.crm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1080;
+  padding: 20px;
+}
+
+.crm-modal-card {
+  background: var(--surface-container-lowest);
+  padding: 28px;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--surface-container-high);
+  animation: crm-fade-in 0.25s ease-out;
+}
