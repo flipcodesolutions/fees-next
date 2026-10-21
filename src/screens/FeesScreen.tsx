@@ -6,15 +6,27 @@ import Pagination from '../components/Pagination';
 import { generateReceiptHtml } from '../components/FeeReceiptTemplate';
 import { formatDate, formatCsvDate } from '../services/utils';
 
-const normalizeFeeStatus = (fee: FeeSummary): FeeSummary => {
-  if (fee.status === 'Deleted') return fee;
-  if (fee.remaining_amount <= 0) {
-    return { ...fee, status: 'Complete' };
+const normalizeFeeStatus = (fee: any): FeeSummary => {
+  const total_amount = Number(fee.total_amount || 0);
+  const paid_amount = Number(fee.paid_amount || 0);
+  const remaining_amount = Number(fee.remaining_amount || 0);
+  let status = fee.status;
+  if (status !== 'Deleted') {
+    if (remaining_amount <= 0) {
+      status = 'Complete';
+    } else if (paid_amount > 0) {
+      status = 'Half Complete';
+    } else {
+      status = 'Pending';
+    }
   }
-  if (fee.paid_amount > 0) {
-    return { ...fee, status: 'Half Complete' };
-  }
-  return { ...fee, status: 'Pending' };
+  return {
+    ...fee,
+    total_amount,
+    paid_amount,
+    remaining_amount,
+    status
+  };
 };
 
 const getCourseNames = (payloadJson?: string): string => {
@@ -105,9 +117,12 @@ export default function FeesScreen() {
       result = result.filter((f) => f.status !== 'Deleted');
     }
 
-    setCurrentPage(1);
     return result;
   }, [fees, query, statusFilter, showDeleted]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [query, statusFilter, showDeleted]);
 
   const executeExport = async () => {
     try {
@@ -561,9 +576,9 @@ export default function FeesScreen() {
                       )}
                     </td>
                     <td>{f.mobile}</td>
-                    <td>₹{f.total_amount?.toFixed(2)}</td>
-                    <td className="text-success-bold">₹{f.paid_amount?.toFixed(2)}</td>
-                    <td className="text-error-bold">₹{f.remaining_amount?.toFixed(2)}</td>
+                    <td>₹{Number(f.total_amount || 0).toFixed(2)}</td>
+                    <td className="text-success-bold">₹{Number(f.paid_amount || 0).toFixed(2)}</td>
+                    <td className="text-error-bold">₹{Number(f.remaining_amount || 0).toFixed(2)}</td>
                     <td>
                       <span className={`tag tag-${f.status?.toLowerCase().replace(' ', '-')}`}>
                         {f.status}
@@ -929,7 +944,7 @@ export default function FeesScreen() {
               </div>
               <div className="confirm-info-row">
                 <span className="muted">Remaining Fees:</span>
-                <strong className="text-error-bold">₹{singleConfirmFee.remaining_amount?.toFixed(2)}</strong>
+                <strong className="text-error-bold">₹{Number(singleConfirmFee.remaining_amount || 0).toFixed(2)}</strong>
               </div>
               {singleConfirmFee.next_payment_date && (
                 <div className="confirm-info-row-last">

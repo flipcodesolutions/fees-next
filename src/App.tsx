@@ -19,6 +19,7 @@ import SettingsScreen from './screens/SettingsScreen';
 import { applyDesignTokens } from './theme/designTokens';
 import type { Inquiry } from './services/api';
 import { ToastProvider } from './components/Toast';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function AppContent() {
   const navigate = useNavigate();
@@ -109,32 +110,34 @@ function AppContent() {
 
           <div className="d-md-none app-mobile-nav-spacer"></div>
 
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<DashboardScreen />} />
-            <Route path="/inquiry" element={<InquiryScreen onCompleted={handleInquiryCompleted} />} />
-            <Route path="/follow-up" element={<FollowUpScreen onCompleted={handleFollowUpCompleted} />} />
-            <Route path="/courses" element={<CoursesScreen />} />
-            <Route
-              path="/admission"
-              element={
-                <AdmissionScreen
-                  mode={admissionMode}
-                  inquiry={admissionInquiry}
-                  onListMode={() => setAdmissionMode('list')}
-                />
-              }
-            />
-            <Route path="/fees" element={<FeesScreen />} />
-            <Route path="/fees-report" element={<FeesReportScreen />} />
-            <Route path="/receipt-report" element={<ReceiptReportScreen />} />
-            <Route path="/pending-fees" element={<PendingFeesScreen />} />
+          <ErrorBoundary>
+            <Routes>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/dashboard" element={<DashboardScreen />} />
+              <Route path="/inquiry" element={<InquiryScreen onCompleted={handleInquiryCompleted} />} />
+              <Route path="/follow-up" element={<FollowUpScreen onCompleted={handleFollowUpCompleted} />} />
+              <Route path="/courses" element={<CoursesScreen />} />
+              <Route
+                path="/admission"
+                element={
+                  <AdmissionScreen
+                    mode={admissionMode}
+                    inquiry={admissionInquiry}
+                    onListMode={() => setAdmissionMode('list')}
+                  />
+                }
+              />
+              <Route path="/fees" element={<FeesScreen />} />
+              <Route path="/fees-report" element={<FeesReportScreen />} />
+              <Route path="/receipt-report" element={<ReceiptReportScreen />} />
+              <Route path="/pending-fees" element={<PendingFeesScreen />} />
 
-            <Route path="/change-password" element={<ChangePasswordScreen />} />
-            <Route path="/database-backup" element={<DatabaseBackupScreen />} />
-            <Route path="/settings" element={<SettingsScreen />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
+              <Route path="/change-password" element={<ChangePasswordScreen />} />
+              <Route path="/database-backup" element={<DatabaseBackupScreen />} />
+              <Route path="/settings" element={<SettingsScreen />} />
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </ErrorBoundary>
         </main>
       </div>
     </div>

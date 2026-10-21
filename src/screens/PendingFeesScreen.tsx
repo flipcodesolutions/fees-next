@@ -125,9 +125,9 @@ export default function PendingFeesScreen() {
                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td className="text-semibold">{f.student_name}</td>
                     <td>{f.mobile}</td>
-                    <td>₹{f.total_amount?.toFixed(2)}</td>
-                    <td className="text-success-bold">₹{f.paid_amount?.toFixed(2)}</td>
-                    <td className="text-danger-bold">₹{f.remaining_amount?.toFixed(2)}</td>
+                    <td>₹{Number(f.total_amount || 0).toFixed(2)}</td>
+                    <td className="text-success-bold">₹{Number(f.paid_amount || 0).toFixed(2)}</td>
+                    <td className="text-danger-bold">₹{Number(f.remaining_amount || 0).toFixed(2)}</td>
                     <td>
                       <span className={`tag tag-${f.status?.toLowerCase().replace(' ', '-')}`}>
                         {f.status}

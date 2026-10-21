@@ -12,11 +12,12 @@ export default function DatabaseBackupScreen() {
     setMessage(null);
     try {
       const response = await api.exportDatabase();
-      const blob = new Blob([response.data], { type: 'application/x-sqlite3' });
+      const exportContent = typeof response.data === 'string' ? response.data : JSON.stringify(response.data, null, 2);
+      const blob = new Blob([exportContent], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'database.sqlite';
+      link.download = 'fees_crm_backup.json';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -33,7 +34,7 @@ export default function DatabaseBackupScreen() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!window.confirm('WARNING: Importing a new database will completely overwrite all existing data. Do you want to proceed?')) {
+    if (!window.confirm('WARNING: Importing a backup will overwrite existing records in the database. Do you want to proceed?')) {
       e.target.value = '';
       return;
     }
@@ -53,7 +54,7 @@ export default function DatabaseBackupScreen() {
           window.location.reload();
         }, 1500);
       } catch (error: any) {
-        const errText = error.response?.data?.error || 'Failed to import database. Please ensure it is a valid SQLite file.';
+        const errText = error.response?.data?.error || 'Failed to import database. Please ensure it is a valid JSON backup file.';
         setMessage({ type: 'error', text: errText });
       } finally {
         setIsImporting(false);
@@ -96,7 +97,7 @@ export default function DatabaseBackupScreen() {
               <h3>Backup Database</h3>
             </div>
             <p className="backup-card-desc">
-              Download the complete system database as a <code>database.sqlite</code> file. You can keep this file safe as a backup copy.
+              Download the complete system database as a <code>fees_crm_backup.json</code> file. You can keep this file safe as a backup copy.
             </p>
           </div>
           <button
@@ -119,17 +120,17 @@ export default function DatabaseBackupScreen() {
               <h3>Restore Database</h3>
             </div>
             <p className="backup-card-desc">
-              Upload a previously downloaded <code>database.sqlite</code> file to restore all student, inquiry, and payment records.
+              Upload a previously downloaded <code>fees_crm_backup.json</code> file to restore all student, inquiry, and payment records.
               <br />
-              <strong className="text-error-btn">Warning: This will overwrite current data!</strong>
+              <strong className="text-error-btn">Warning: This will overwrite matching records!</strong>
             </p>
           </div>
           <label className="btn btn-outline-danger backup-btn-full">
             <Upload size={18} />
-            {isImporting ? 'Restoring...' : 'Upload SQLite File'}
+            {isImporting ? 'Restoring...' : 'Upload JSON Backup'}
             <input
               type="file"
-              accept=".sqlite,.db,.sqlite3,*"
+              accept=".json,application/json"
               onChange={handleImport}
               disabled={isImporting}
               className="d-none-input"
