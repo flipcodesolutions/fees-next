@@ -82,12 +82,22 @@ export default function FeesReportScreen() {
         } catch (e) { /* ignore */ }
       }
 
+      const totalPaidInRange = studentPayments.reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+      const totalAmount = Number(f.total_amount || 0);
+      const overallPaid = paymentsArr
+        .filter(p => p.admission_id === f.admission_id)
+        .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+      const remainingAmount = Math.max(0, totalAmount - overallPaid);
+
       return {
         ...f,
+        total_amount: totalAmount,
+        paid_amount: overallPaid,
+        remaining_amount: remainingAmount,
         courseNames,
         startDates,
         paymentsInRange: studentPayments,
-        totalPaidInRange: studentPayments.reduce((sum, p) => sum + (Number(p.amount) || 0), 0),
+        totalPaidInRange,
         installments: studentPayments.length
       };
     });

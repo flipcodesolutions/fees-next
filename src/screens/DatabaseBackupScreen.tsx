@@ -12,8 +12,13 @@ export default function DatabaseBackupScreen() {
     setMessage(null);
     try {
       const response = await api.exportDatabase();
-      const exportContent = typeof response.data === 'string' ? response.data : JSON.stringify(response.data, null, 2);
-      const blob = new Blob([exportContent], { type: 'application/json' });
+      let blob: Blob;
+      if (response.data instanceof Blob) {
+        blob = response.data;
+      } else {
+        const exportContent = typeof response.data === 'string' ? response.data : JSON.stringify(response.data, null, 2);
+        blob = new Blob([exportContent], { type: 'application/json' });
+      }
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
